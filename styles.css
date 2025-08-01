@@ -1,7 +1,11 @@
-p{ font-size: 25px;}
+title{ color: white; }
+p{ font-size: 40px; }
+p{ color: blue; }
 h1{ color: teal; }
 h2{ color: yellow; }
 h3{ color: cyan; }
+h4{ font-size: 20px; }
+h4{ color: white; }
 
 nav{
 text-align: center;
@@ -12,8 +16,9 @@ padding: 0 ;
 }
 nav ul li{
 list-style: none;
-display: inline-grid;
-width: calc(100% / 7);
+display: inline-block;
+width: 18%;
+min-width: 90px;
 }
 nav ul li a{
 text-decoration: none;
@@ -39,4 +44,3 @@ nav {
   top: 0;
   left: 0;
 }
-
