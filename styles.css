@@ -12,9 +12,8 @@ padding: 0 ;
 }
 nav ul li{
 list-style: none;
-display: inline-block;
-width: 18%;
-min-width: 90px;
+display: inline-grid;
+width: calc(100% / 7);
 }
 nav ul li a{
 text-decoration: none;
