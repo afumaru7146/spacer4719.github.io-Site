@@ -4,6 +4,8 @@ p{ color: blue; }
 h1{ color: teal; }
 h2{ color: yellow; }
 h3{ color: cyan; }
+h4{ color: white; }
+h4{ font-size: 50px; }
 
 nav{
 text-align: center;
