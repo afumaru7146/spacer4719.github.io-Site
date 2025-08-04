@@ -1,6 +1,6 @@
 p{ font-size: 25px;}
 h1{ color: teal; }
-h2{ color: yellow; }
+h2{ color: blue; }
 h3{ color: cyan; }
 
 nav{
@@ -39,4 +39,5 @@ nav {
   position: fixed;
   top: 0;
   left: 0;
+
 }
