@@ -44,15 +44,16 @@ margin-top: 2rem;
 }
 
 }
-nav {
-  padding-top: 20px;
-  box-sizing: border-box;
+nav{
+padding-top: 20px;
+box-sizing: border-box;
 }
-nav {
-  position: fixed;
-  top: 0;
-  left: 0;
+nav{
+position: fixed;
+top: 0;
+left: 0;
 }
+
 
 
 
