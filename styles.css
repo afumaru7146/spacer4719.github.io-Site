@@ -1,4 +1,4 @@
-h1{ font-size: 20px; }
+h1{ font-size: 100px; }
 h1{ color: white; }
 h2{ color: yellow; }
 h3{ color: cyan; }
@@ -48,6 +48,7 @@ nav {
   top: 0;
   left: 0;
 }
+
 
 
 
