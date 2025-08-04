@@ -34,7 +34,17 @@ color: #F33135;
 nav ul li a:hover{
 color: #E7DA66;
 }
-   
+nav {
+padding-top: 20px;
+box-sizing: border-box;
+}
+nav {
+position: fixed;
+top: 0;
+left: 0;
+  
+}
+
 footer {
 background-color: #008080;
 color: #fff;
@@ -43,16 +53,6 @@ padding: 1rem;
 margin-top: 2rem;
 }
 
-}
-nav{
-padding-top: 20px;
-box-sizing: border-box;
-}
-nav{
-position: fixed;
-top: 0;
-left: 0;
-}
 
 
 
