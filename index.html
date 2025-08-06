@@ -12,6 +12,31 @@
     <html lang="ja">
 <head>
 <link rel="icon" href="images/site%20icon.ico" type="image/x-icon">
+
+<style>
+    body {
+      background-color: #0a3d62;
+      font-family: 'Inter', sans-serif;
+      text-align: center;
+      padding: 3rem;
+    }
+
+    .neon-text {
+      color: #00f7ff;
+      font-size: 3rem;
+      text-shadow:
+        0 0 5px #00f7ff,
+        0 0 10px #00f7ff,
+        0 0 20px #00f7ff,
+        0 0 30px #0ff;
+      animation: flicker 2s infinite;
+    }
+
+    @keyframes flicker {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.85; }
+    }
+  </style>
 </head>    
 </html>    
 <nav>
