@@ -96,13 +96,3 @@ nav {
   top: 0;
   left: 0;
 }
-footer {
-  width: 40%;
-  height: 60px; 
-  text-align: center;
-  padding: 50px 0;
-  background-color: #000000;
-}
-.footer-text {
-  color: #fff;
-}
