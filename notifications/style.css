@@ -3,6 +3,13 @@ p{ color: white; }
 h1{ color: teal; }
 h2{ color: yellow; }
 h3{ color: cyan; }
+
+body {
+  background-color: #002451; /* 暗めネオンブルー */
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+}
+
 nav{
 text-align: center;
 }
@@ -39,5 +46,4 @@ nav {
   position: fixed;
   top: 0;
   left: 0;
-
 }

@@ -8,6 +8,12 @@ h4{ font-size: 20px; }
 h4{ color: white; }
 
 
+body {
+  background-color: #002451; /* 暗めネオンブルー */
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+}
+
 nav{
 text-align: center;
 }
