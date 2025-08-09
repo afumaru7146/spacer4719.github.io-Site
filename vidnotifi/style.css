@@ -10,7 +10,7 @@ body {
   font-family: 'Inter', sans-serif;
 }
 
-a {
+:where(:any-link) {
   color: blue;
 }
 nav{
