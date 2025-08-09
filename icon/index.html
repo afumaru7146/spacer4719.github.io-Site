@@ -31,24 +31,39 @@
       <p style="margin:0 0 0.5rem 0; color:#00f7ff; font-weight:bold;">音楽15秒プレビュー</p>
       <audio id="preview-audio" controls style="width:180px;">
         <source src="Taylor Torrence, Kyra Mastro - Want Your Body [NCS Release].mp3" type="audio/mpeg">
-        お使いのブラウザはaudioタグに対応していません。
       </audio>
     </div>
   </div>
 </div>
 <script>
-  // 15秒で自動停止
+  // 途中（例：30秒）から15秒だけ再生
   const audio = document.getElementById('preview-audio');
   let previewTimeout;
+  const previewStart = 30; // 開始秒数（例：30秒から再生）
+  const previewLength = 15; // プレビュー秒数
+
   audio.addEventListener('play', function() {
     clearTimeout(previewTimeout);
+    // 再生開始時に開始位置へジャンプ
+    if (Math.abs(audio.currentTime - previewStart) > 0.5) {
+      audio.currentTime = previewStart;
+    }
     previewTimeout = setTimeout(() => {
       audio.pause();
-      audio.currentTime = 0;
-    }, 15000);
+      audio.currentTime = previewStart;
+    }, previewLength * 1000);
   });
+
   audio.addEventListener('pause', function() {
     clearTimeout(previewTimeout);
+  });
+
+  // シークで範囲外に出たら自動停止
+  audio.addEventListener('timeupdate', function() {
+    if (audio.currentTime > previewStart + previewLength) {
+      audio.pause();
+      audio.currentTime = previewStart;
+    }
   });
 </script>
 
