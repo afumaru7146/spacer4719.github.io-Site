@@ -8,6 +8,8 @@ h3{ font-size: 15px; }
 h3{ color: white; }
 h4{ font-size: 40px; }
 h4{ color: red; }
+h5{ font-size: 40px; }
+h5{ color: cyan}
 
 body {
   background-color: #002451; /* 暗めネオンブルー */
