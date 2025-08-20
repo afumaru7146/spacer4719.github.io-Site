@@ -199,7 +199,59 @@
 
 
 
+ 
   
+<main>
+  <div style="margin-top: 7vh; margin-bottom: 7vh;">
+    <h1 style="
+      font-size: 5rem;
+      color: #00f7ff;
+      text-shadow: 0 0 24px #00f7ff, 0 0 48px #0ff, 0 0 8px #fff;
+      letter-spacing: 0.15em;
+      font-weight: bold;
+      margin-bottom: 0.5em;
+      animation: flicker404 2s infinite;
+    ">
+      404
+    </h1>
+    <div style="
+      font-size: 2rem;
+      color: #fff;
+      text-shadow: 0 0 8px #00f7ff, 0 0 2px #fff;
+      margin-bottom: 1.5em;
+      font-weight: bold;
+      letter-spacing: 0.08em;
+    ">
+      this page has not found
+    </div>
+    <a href="/" style="
+      display: inline-block;
+      margin-top: 1.5em;
+      padding: 0.7em 2.2em;
+      font-size: 1.2rem;
+      color: #00f7ff;
+      background: rgba(0, 247, 255, 0.08);
+      border: 2px solid #00f7ff;
+      border-radius: 32px;
+      text-decoration: none;
+      font-weight: bold;
+      box-shadow: 0 0 16px #00f7ff88;
+      transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+      text-shadow: 0 0 8px #00f7ff, 0 0 2px #fff;
+    " onmouseover="this.style.background='#00f7ff33';this.style.color='#fff';"
+      onmouseout="this.style.background='rgba(0,247,255,0.08)';this.style.color='#00f7ff';">
+      ホームに戻る
+    </a>
+  </div>
+  <style>
+    @keyframes flicker404 {
+      0%, 100% { opacity: 1; }
+      45% { opacity: 0.85; }
+      50% { opacity: 0.7; }
+      55% { opacity: 0.85; }
+    }
+  </style>
+</main>
 
 
 
