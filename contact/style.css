@@ -10,40 +10,45 @@ body {
   font-family: 'Inter', sans-serif;
 }
 
-nav{
-text-align: center;
-}
-nav ul{
-margin: 0 ;
-padding: 0 ;
-}
-nav ul li{
-list-style: none;
-display: inline-block;
-width: 18%;
-min-width: 90px;
-}
-nav ul li a{
-text-decoration: none;
-color: #333;
-}
-nav ul li.current a{
-color: #F33135;
-}
-nav ul li a:hover{
-color: #E7DA66;
-}
 nav {
   width: 100%;
-  height: 70px;
-  background-color: teal;
-}
-nav {
-  padding-top: 20px;
-  box-sizing: border-box;
-}
-nav {
-  position: fixed;
+  background: linear-gradient(90deg, #003366 0%, #005577 100%);
+  box-shadow: 0 4px 24px #00f7ff55, 0 1px 0 #00f7ff inset;
+  padding: 0;
+  margin-bottom: 2rem;
+  position: sticky;
   top: 0;
-  left: 0;
+  z-index: 10;
+}
+
+nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  gap: 3rem;
+  height: 64px;
+  align-items: center;
+}
+
+nav ul li a {
+  color: #00f7ff;
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-shadow: 0 0 8px #00f7ff, 0 0 2px #fff;
+  padding: 0.5em 1.2em;
+  border-radius: 8px;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  text-decoration: none;
+  letter-spacing: 0.05em;
+}
+
+nav ul li a:hover,
+nav ul li a:focus {
+  background: #00f7ff;
+  color: #002451;
+  box-shadow: 0 0 16px #00f7ff, 0 0 4px #fff;
+  text-decoration: none;
+  outline: none;
 }
