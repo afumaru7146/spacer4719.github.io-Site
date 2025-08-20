@@ -1,14 +1,67 @@
-    </div>  
-<link rel="stylesheet" type="text/css" href="styles.css" />
+ <!DOCTYPE html>
+<html lang="ja">
 <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" type="text/css" href="styles.css" /> 
-    <title>画像保存場所</title>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>画像保存場所</title>
+
+  <link rel="icon" href="/images/siteicon.ico?v=2" type="image/x-icon" />
+
+  <link rel="stylesheet" href="styles.css" />
+
+  <meta property="og:url" content="https://spacer4719.f5.si/" />
+
+  <style>
+    :where(:any-link) {
+  color: cyan; 
+    }
+
+    body {
+      background-color: #0a3d62;
+      font-family: 'Inter', sans-serif;
+      text-align: center;
+      padding: 3rem;
+    }
+
+    .neon-text {
+      color: #00f7ff;
+      font-size: 3rem;
+      text-shadow:
+        0 0 5px #00f7ff,
+        0 0 10px #00f7ff,
+        0 0 20px #00f7ff,
+        0 0 30px #0ff;
+      animation: flicker 2s infinite;
+    }
+
+    @keyframes flicker {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.85; }
+    }
+
+    nav ul {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    nav a {
+      color: #00f7ff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
-<!DOCTYPE html>
-<html>
+</html>
+
   <header>
     <nav style="width:100vw; margin:0; padding:0; position:fixed; top:0; left:0; z-index:100; background:linear-gradient(90deg, #003366 0%, #005577 100%); box-shadow:0 4px 24px #00f7ff55, 0 1px 0 #00f7ff inset;">
       <div style="
@@ -39,8 +92,7 @@
     </nav>
     <div style="height:64px;">
     </div>
-  </header> 
-    
+  </header>
 
 
 
