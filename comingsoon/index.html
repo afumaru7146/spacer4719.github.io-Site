@@ -93,7 +93,56 @@
     </div>
   </header>
 
+<h1 class="comingsoon-title">New Project Coming Soon...</h1>
+<div class="redirect-msg">5秒後にリダイレクトされます</div>
 
+<style>
+.comingsoon-title {
+  margin-top: 4rem;
+  font-size: 2.8rem;
+  color: #00f7ff;
+  letter-spacing: 0.12em;
+  font-weight: bold;
+  text-shadow:
+    0 0 12px #00f7ff,
+    0 0 32px #0ff,
+    0 0 8px #fff;
+  animation: comingsoon-glow 2.5s infinite alternate, comingsoon-move 2.5s infinite alternate;
+}
+
+@keyframes comingsoon-glow {
+  0% {
+    text-shadow:
+      0 0 6px #00f7ff,
+      0 0 12px #0ff,
+      0 0 2px #fff;
+    color: #00f7ff;
+  }
+  50% {
+    text-shadow:
+      0 0 32px #00f7ff,
+      0 0 64px #0ff,
+      0 0 16px #fff;
+    color: #fff;
+  }
+  100% {
+    text-shadow:
+      0 0 6px #00f7ff,
+      0 0 12px #0ff,
+      0 0 2px #fff;
+    color: #00f7ff;
+  }
+}
+
+@keyframes comingsoon-move {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-8px) scale(1.04); }
+  100% { transform: translateY(0); }
+}
+</style>
+
+
+<meta http-equiv="refresh" content="5; url=https://spacer4719.f5.si/redirect-destination/" />
 
 <div style="
     width: 100vw;
