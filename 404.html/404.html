@@ -1,0 +1,294 @@
+ <!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>page error</title>
+
+  <link rel="icon" href="/images/siteicon.ico?v=2" type="image/x-icon" />
+
+  <link rel="stylesheet" href="styles.css" />
+
+  <meta property="og:url" content="https://spacer4719.f5.si/" />
+
+
+<style>
+  body {
+    background: linear-gradient(135deg, #0a3d62 0%, #003366 100%);
+    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+    color: #e0f7fa;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+  }
+  h1 {
+    font-size: 2.5rem;
+    margin-top: 2.5rem;
+    margin-bottom: 2rem;
+    color: #00f7ff;
+    text-shadow: 0 0 12px #00f7ff, 0 0 24px #0ff;
+    letter-spacing: 0.08em;
+    font-weight: bold;
+    animation: flicker 2s infinite;
+  }
+  @keyframes flicker {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.85; }
+  }
+  .profile-table {
+    margin: 0 auto 3rem auto;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: rgba(10, 61, 98, 0.85);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px #00f7ff33, 0 1.5px 0 #00f7ff55 inset;
+    min-width: 340px;
+    max-width: 600px;
+    width: 90vw;
+  }
+  .profile-table th, .profile-table td {
+    padding: 18px 16px;
+    text-align: center;
+    border-bottom: 1px solid #00f7ff55;
+    font-size: 1.1rem;
+    transition: background 0.2s;
+  }
+  .profile-table th {
+    background: linear-gradient(90deg, #0000ff 60%, #003366 100%);
+    color: #fff;
+    font-weight: bold;
+    font-size: 1.15rem;
+    letter-spacing: 0.05em;
+    border-right: 1px solid #00f7ff55;
+    text-shadow: 0 0 8px #00f7ff, 0 0 2px #fff;
+  }
+  .profile-table td:first-child {
+    background: linear-gradient(90deg, #0000ff 60%, #003366 100%);
+    color: #fff;
+    font-weight: bold;
+    border-right: 1px solid #00f7ff55;
+    text-shadow: 0 0 8px #00f7ff, 0 0 2px #fff;
+    min-width: 120px;
+  }
+  .profile-table tr:last-child td, .profile-table tr:last-child th {
+    border-bottom: none;
+  }
+  .profile-table td {
+    background: rgba(30, 30, 40, 0.85);
+    color: #e0f7fa;
+    font-size: 1.08rem;
+    word-break: break-word;
+  }
+  .profile-table img {
+    width: 120px;
+    height: 120px;
+    border-radius: 16px;
+    box-shadow: 0 0 16px #00f7ff88;
+    background: #222;
+    margin: 0.5em 0;
+  }
+  .profile-table span[style*="background-color"] {
+    border-radius: 4px;
+    border: 1.5px solid #00f7ff;
+    box-shadow: 0 0 8px #00f7ff88;
+    margin-left: 0.6em;
+    vertical-align: middle;
+    display: inline-block;
+    width: 1.2em;
+    height: 1.2em;
+  }
+
+  .profile-table tr:hover td {
+    background: rgba(0, 247, 255, 0.08);
+    transition: background 0.2s;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+    background: #003366;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #00f7ff88;
+    border-radius: 4px;
+  }
+
+  .footer-bar {
+    width: 100vw;
+    margin: 0;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 100;
+    background: linear-gradient(90deg, #003366 0%, #005577 100%);
+    box-shadow: 0 -4px 24px #00f7ff55, 0 -1px 0 #00f7ff inset;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0;
+  }
+  .footer-bar span {
+    color: #00f7ff;
+    font-size: 1.1rem;
+    text-shadow: 0 0 8px #00f7ff, 0 0 2px #fff;
+    letter-spacing: 0.03em;
+  }
+  .footer-bar a {
+    color: #00f7ff;
+    text-decoration: underline;
+    font-weight: bold;
+  }
+  .footer-space {
+    height: 56px;
+  }
+  @media (max-width: 700px) {
+    .profile-table {
+      font-size: 0.98rem;
+      min-width: unset;
+      width: 99vw;
+    }
+    .profile-table th, .profile-table td {
+      padding: 10px 6px;
+      font-size: 0.98rem;
+    }
+    .profile-table img {
+      width: 72px;
+      height: 72px;
+    }
+    h1 {
+      font-size: 1.5rem;
+    }
+  }
+</style>
+</head>
+</html>
+
+  <header>
+    <nav style="width:100vw; margin:0; padding:0; position:fixed; top:0; left:0; z-index:100; background:linear-gradient(90deg, #003366 0%, #005577 100%); box-shadow:0 4px 24px #00f7ff55, 0 1px 0 #00f7ff inset;">
+      <div style="
+        width: 80vw;
+        max-width: 1200px;
+        min-width: 320px;
+        margin: 0 auto;
+        background: transparent;
+        border-radius: 0 0 12px 12px;
+        height: 64px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      ">
+        <ul style="list-style:none; padding:0; margin:0; display:flex; justify-content:center; align-items:center; gap:2.5rem; height:100%;">
+          <li>
+            <a href="/" class="header-link" style="display:flex; align-items:center; height:100%;">
+              <img src="https://spacer4719.f5.si/images/siteicon.ico" class="header-image" width="48" height="48" style="margin-right:1.2rem;">
+            </a>
+          </li>
+          <li><a href="https://spacer4719.f5.si/aboutme/" style="color:#00f7ff; font-size:1.1rem; font-weight:bold; text-shadow:0 0 8px #000000, 0 0 2px #000000; padding:0.3em 1em; border-radius:8px; transition:background 0.2s, color 0.2s, box-shadow 0.2s; text-decoration:none; letter-spacing:0.05em;">自己紹介</a></li>
+          <li><a href="https://spacer4719.f5.si/notifications" style="color:#00f7ff; font-size:1.1rem; font-weight:bold; text-shadow:0 0 8px #000000, 0 0 2px #000000; padding:0.3em 1em; border-radius:8px; transition:background 0.2s, color 0.2s, box-shadow 0.2s; text-decoration:none; letter-spacing:0.05em;">お知らせ</a></li>
+          <li><a href="https://spacer4719.f5.si/links" style="color:#00f7ff; font-size:1.1rem; font-weight:bold; text-shadow:0 0 8px #000000, 0 0 2px #000000; padding:0.3em 1em; border-radius:8px; transition:background 0.2s, color 0.2s, box-shadow 0.2s; text-decoration:none; letter-spacing:0.05em;">他サイト</a></li>
+          <li><a href="https://spacer4719.f5.si/blog" style="color:#00f7ff; font-size:1.1rem; font-weight:bold; text-shadow:0 0 8px #000000, 0 0 2px #000000; padding:0.3em 1em; border-radius:8px; transition:background 0.2s, color 0.2s, box-shadow 0.2s; text-decoration:none; letter-spacing:0.05em;">ブログ</a></li>
+        </ul>
+      </div>
+    </nav>
+    <div style="height:64px;">
+    </div>
+  </header>
+
+
+
+ 
+
+<main>
+  <div style="margin-top: 7vh; margin-bottom: 7vh;">
+    <h1 style="
+      font-size: 5rem;
+      color: #00f7ff;
+      text-shadow: 0 0 24px #00f7ff, 0 0 48px #0ff, 0 0 8px #fff;
+      letter-spacing: 0.15em;
+      font-weight: bold;
+      margin-bottom: 0.5em;
+      animation: flicker404 2s infinite;
+    ">
+      404
+    </h1>
+    <div style="
+      font-size: 2rem;
+      color: #fff;
+      text-shadow: 0 0 8px #00f7ff, 0 0 2px #fff;
+      margin-bottom: 1.5em;
+      font-weight: bold;
+      letter-spacing: 0.08em;
+    ">
+      this page has not found
+    </div>
+    <a href="/" style="
+      display: inline-block;
+      margin-top: 1.5em;
+      padding: 0.7em 2.2em;
+      font-size: 1.2rem;
+      color: #00f7ff;
+      background: rgba(0, 247, 255, 0.08);
+      border: 2px solid #00f7ff;
+      border-radius: 32px;
+      text-decoration: none;
+      font-weight: bold;
+      box-shadow: 0 0 16px #00f7ff88;
+      transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+      text-shadow: 0 0 8px #00f7ff, 0 0 2px #fff;
+    " onmouseover="this.style.background='#00f7ff33';this.style.color='#fff';"
+      onmouseout="this.style.background='rgba(0,247,255,0.08)';this.style.color='#00f7ff';">
+      ホームに戻る
+    </a>
+  </div>
+  <style>
+    @keyframes flicker404 {
+      0%, 100% { opacity: 1; }
+      45% { opacity: 0.85; }
+      50% { opacity: 0.7; }
+      55% { opacity: 0.85; }
+    }
+  </style>
+</main>
+
+
+
+
+
+
+
+  <div style="
+    width: 100vw;
+    margin: 0;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 100;
+    background: linear-gradient(90deg, #003366 0%, #005577 100%);
+    box-shadow: 0 -4px 24px #00f7ff55, 0 -1px 0 #00f7ff inset;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0;
+  ">
+    <span style="
+      color: #00f7ff;
+      font-size: 1.1rem;
+      text-shadow: 0 0 8px #00f7ff, 0 0 2px #fff;
+      letter-spacing: 0.03em;
+    ">
+      &copy; 2024-2025 spacer4719 / すぺさー。 All rights reserved.
+      お問い合わせは
+      <a href="http://spacer4719.f5.si/contact" style="color:#00f7ff; text-decoration:underline; font-weight:bold;">こちらから</a>
+    </span>
+  </div>
+  <div style="height:56px;">
+  </div>
+
+  <meta property="og:url" content="https://spacer4719.f5.si/"/>
+   <link href="style.css" rel="stylesheet"/>
+   <link rel="stylesheet" type="text/css" href="style.css" />
