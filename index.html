@@ -99,7 +99,28 @@
         <br>自己紹介などは上のボタンから見てね！  
     </p>
 
-<img src="https://spacer4719.f5.si/images/NSH.png" alt="spacer4719&#39;s site" decoding="async" data-v-53dd8bc2>
+<img
+  src="https://spacer4719.f5.si/images/NSH.png"
+  alt="spacer4719's site"
+  decoding="async"
+  data-v-53dd8bc2
+  id="random-link-image"
+  style="cursor:pointer;"
+>
+<script>
+  // ランダムに飛ばすページのURLリスト
+  const randomPages = [
+    "https://spacer4719.f5.si/",
+    "https://spacer4719.f5.si/aboutme/",
+    "https://spacer4719.f5.si/notifications",
+    "https://spacer4719.f5.si/links",
+    "https://spacer4719.f5.si/blog"
+  ];
+  document.getElementById('random-link-image').onclick = function() {
+    const url = randomPages[Math.floor(Math.random() * randomPages.length)];
+    window.location.href = url;
+  };
+</script>
 
 <div style="
     width: 100vw;
