@@ -1,29 +1,21 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Site's Home...</title>
-
   <link rel="icon" href="/images/siteicon.ico?v=2" type="image/x-icon" />
-
   <link rel="stylesheet" href="styles.css" />
-
   <meta property="og:url" content="https://spacer4719.f5.si/" />
-
   <style>
-    :where(:any-link) {
-  color: cyan; 
-    }
-
     body {
       background-color: #0a3d62;
       font-family: 'Inter', sans-serif;
       text-align: center;
-      padding: 3rem;
+      padding: 3rem 0 0 0;
+      margin: 0;
     }
-
     .neon-text {
       color: #00f7ff;
       font-size: 3rem;
@@ -34,36 +26,27 @@
         0 0 30px #0ff;
       animation: flicker 2s infinite;
     }
-
     @keyframes flicker {
       0%, 100% { opacity: 1; }
       50% { opacity: 0.85; }
     }
-
-    nav ul {
-      list-style: none;
+    header {
+      width: 100vw;
+      margin: 0;
       padding: 0;
-      display: flex;
-      justify-content: center;
-      gap: 1.5rem;
-      margin-bottom: 2rem;
     }
-
-    nav a {
-      color: #00f7ff;
-      text-decoration: none;
-      font-weight: bold;
+    nav {
+      width: 100vw;
+      margin: 0;
+      padding: 0;
+            position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 100;
+      background: linear-gradient(90deg, #003366 0%, #005577 100%);
+      box-shadow: 0 4px 24px #00f7ff55, 0 1px 0 #00f7ff inset;
     }
-
-    nav a:hover {
-      text-decoration: underline;
-    }
-  </style>
-</head>
-</html>
-<header>
-  <nav style="width:100vw; margin:0; padding:0; position:fixed; top:0; left:0; z-index:100; background:linear-gradient(90deg, #003366 0%, #005577 100%); box-shadow:0 4px 24px #00f7ff55, 0 1px 0 #00f7ff inset;">
-    <div style="
+    .nav-inner {
       width: 80vw;
       max-width: 1200px;
       min-width: 320px;
@@ -73,40 +56,129 @@
       height: 64px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: flex-start;
       position: relative;
-    ">
-      <!-- アイコンを左端に -->
-      <div style="display:flex; align-items:center; height:100%;">
-        <a href="/" class="header-link" style="display:flex; align-items:center; height:100%;">
-          <img src="https://spacer4719.f5.si/images/siteicon.ico" class="header-image" width="48" height="48" style="margin-right:1.2rem;">
-        </a>
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      flex: 0 0 auto;
+    }
+    .nav-logo img {
+      margin-right: 1.2rem;
+      width: 48px;
+      height: 48px;
+      display: block;
+    }
+    .nav-menu {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 2.5rem;
+      height: 100%;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      background: transparent;
+    }
+    .nav-menu li a {
+      color: #00f7ff;
+      font-size: 1.1rem;
+      font-weight: bold;
+      text-shadow: 0 0 8px #000000, 0 0 2px #000000;
+      padding: 0.3em 1em;
+      border-radius: 8px;
+      transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      display: inline-block;
+      line-height: 1.2;
+      background: transparent;
+    }
+    .nav-menu li a:hover {
+      background: #00f7ff22;
+        color: #fff;
+      text-decoration: underline;
+    }
+    .header-space {
+      height: 64px;
+    }
+    .footer-bar {
+      width: 100vw;
+      margin: 0;
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 100;
+      background: linear-gradient(90deg, #003366 0%, #005577 100%);
+      box-shadow: 0 -4px 24px #00f7ff55, 0 -1px 0 #00f7ff inset;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 0;
+    }
+    .footer-bar span {
+      color: #00f7ff;
+      font-size: 1.1rem;
+      text-shadow: 0 0 8px #00f7ff, 0 0 2px #fff;
+      letter-spacing: 0.03em;
+    }
+    .footer-bar a {
+      color: #00f7ff;
+      text-decoration: underline;
+      font-weight: bold;
+    }
+    .footer-space {
+      height: 56px;
+    }
+    @media (max-width: 700px) {
+      .nav-inner {
+        width: 98vw;
+        min-width: unset;
+        height: 56px;
+      }
+            .nav-menu {
+        gap: 1.2rem;
+        font-size: 0.95rem;
+      }
+      .nav-logo img {
+        width: 36px;
+        height: 36px;
+        margin-right: 0.6rem;
+      }
+      .header-space {
+        height: 56px;
+      }
+    }
+      </style>
+</head>
+ <body>
+  <header>
+    <nav>
+      <div class="nav-inner">
+        <div class="nav-logo">
+          <a href="/" class="header-link">
+            <img src="https://spacer4719.f5.si/images/siteicon.ico" class="header-image" alt="logo">
+          </a>
+        </div>
+        <ul class="nav-menu">
+          <li><a href="https://spacer4719.f5.si/">HOME</a></li>
+          <li><a href="https://spacer4719.f5.si/aboutme/">自己紹介</a></li>
+          <li><a href="https://spacer4719.f5.si/notifications">お知らせ</a></li>
+          <li><a href="https://spacer4719.f5.si/links">他サイト</a></li>
+          <li><a href="https://spacer4719.f5.si/blog">ブログ</a></li>
+        </ul>
       </div>
-      <!-- メニューを中央に -->
-      <ul style="
-        list-style:none;
-        padding:0;
-        margin:0;
-        display:flex;
-        justify-content:center;
-        align-items:center;
-        gap:2.5rem;
-        height:100%;
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
-      ">
-        <li><a href="https://spacer4719.f5.si/" style="color:#00f7ff; font-size:1.1rem; font-weight:bold; text-shadow:0 0 8px #000000, 0 0 2px #000000; padding:0.3em 1em; border-radius:8px; transition:background 0.2s, color 0.2s, box-shadow 0.2s; text-decoration:none; letter-spacing:0.05em;">HOME</a></li>
-        <li><a href="https://spacer4719.f5.si/aboutme/" style="color:#00f7ff; font-size:1.1rem; font-weight:bold; text-shadow:0 0 8px #000000, 0 0 2px #000000; padding:0.3em 1em; border-radius:8px; transition:background 0.2s, color 0.2s, box-shadow 0.2s; text-decoration:none; letter-spacing:0.05em;">自己紹介</a></li>
-        <li><a href="https://spacer4719.f5.si/notifications" style="color:#00f7ff; font-size:1.1rem; font-weight:bold; text-shadow:0 0 8px #000000, 0 0 2px #000000; padding:0.3em 1em; border-radius:8px; transition:background 0.2s, color 0.2s, box-shadow 0.2s; text-decoration:none; letter-spacing:0.05em;">お知らせ</a></li>
-        <li><a href="https://spacer4719.f5.si/links" style="color:#00f7ff; font-size:1.1rem; font-weight:bold; text-shadow:0 0 8px #000000, 0 0 2px #000000; padding:0.3em 1em; border-radius:8px; transition:background 0.2s, color 0.2s, box-shadow 0.2s; text-decoration:none; letter-spacing:0.05em;">他サイト</a></li>
-        <li><a href="https://spacer4719.f5.si/blog" style="color:#00f7ff; font-size:1.1rem; font-weight:bold; text-shadow:0 0 8px #000000, 0 0 2px #000000; padding:0.3em 1em; border-radius:8px; transition:background 0.2s, color 0.2s, box-shadow 0.2s; text-decoration:none; letter-spacing:0.05em;">ブログ</a></li>
-      </ul>
-    </div>
-  </nav>
-  <div style="height:64px;"></div>
-</header>
-
+    </nav>
+    <div class="header-space"></div>
+  </header>
+  
  <h1></h1>
     <h1>ようこそ</h1>
     <p>こんにちは！ spaceer4719 / すぺさー。 のサイトへようこそ！
