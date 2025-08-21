@@ -150,15 +150,14 @@
   justify-content: center;
   align-items: center;
   margin: 0 auto 3.5rem auto;
-  padding: 1.5rem 0;
+  padding: 0;
   background: linear-gradient(120deg, #003366 60%, #0a3d62 100%);
   border-radius: 24px;
   box-shadow: 0 8px 32px #00f7ff33, 0 1.5px 0 #00f7ff55 inset;
   max-width: 800px;
-    width: 90vw;
-  height: 270px; 
-  overflow: hidden;
   width: 90vw;
+  height: 250px; /* 必要に応じて高さを調整 */
+  overflow: hidden;
   transition: box-shadow 0.3s;
 }
 .main-banner-img-full {
@@ -169,16 +168,6 @@
   box-shadow: none;
   transition: transform 0.2s, box-shadow 0.2s;
   display: block;
-}
-.main-banner-wrap:hover {
-  box-shadow: 0 0 48px #00f7ff88, 0 8px 32px #00f7ff33;
-}
-.main-banner-img-full{
-  width: 100%;
-  max-width: 720px;
-  border-radius: 18px;
-  box-shadow: 0 0 32px #00f7ff88, 0 2px 16px #003366;
-  transition: transform 0.2s, box-shadow 0.2s;
 }
 .main-banner-wrap:hover .main-banner-img-full {
   transform: scale(1.03);
