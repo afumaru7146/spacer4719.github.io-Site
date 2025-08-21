@@ -173,22 +173,23 @@
 .main-banner-wrap:hover {
   box-shadow: 0 0 48px #00f7ff88, 0 8px 32px #00f7ff33;
 }
-.main-banner-img {
+.main-banner-img-full{
   width: 100%;
   max-width: 720px;
   border-radius: 18px;
   box-shadow: 0 0 32px #00f7ff88, 0 2px 16px #003366;
   transition: transform 0.2s, box-shadow 0.2s;
 }
-.main-banner-img:hover {
-  transform: scale(1.025) rotate(-1deg);
-  box-shadow: 0 0 64px #00f7ffcc, 0 8px 32px #003366;
+.main-banner-wrap:hover .main-banner-img-full {
+  transform: scale(1.03);
   filter: brightness(1.08) saturate(1.1);
 }
 @media (max-width: 900px) {
-  .main-title { font-size: 2.1rem; }
-  .main-banner-img { max-width: 98vw; }
-  .main-banner-wrap { padding: 0.5rem 0; }
+  .main-banner-wrap {
+    height: 36vw;
+    min-height: 120px;
+    max-height: 50vw;
+  }
 }
 </style>
 <script>
