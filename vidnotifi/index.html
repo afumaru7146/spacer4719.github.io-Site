@@ -94,13 +94,46 @@
     </div>
   </header>
     
-
-
-<h1>このページは？</h1>
-<p>spacer4719のYouTubeチャンネルに出る動画お知らせページです。<br>
+<h1 class="main-title">このページは？</h1>
+<p class="main-lead">
+spacer4719のYouTubeチャンネルに出る動画お知らせページです。<br>
 動画投稿等のお知らせはこのページでやってます。投稿頻度は終わってますが見てくれると嬉しいです。<br>
 YouTubeチャンネルは<a href="https://Youtube.com/@spacer4719" target="_blank">こちらから</a><br>
 サイト更新に関するお知らせは<a href="https://spacer4719.f5.si/notifications" target="_blank">こちらから</a></p>
+
+<style>
+.main-title {
+  font-size: 3.2rem;
+  color: #fff;
+  font-weight: bold;
+  margin-top: 3.5rem;
+  margin-bottom: 1.2rem;
+  letter-spacing: 0.12em;
+  text-shadow:
+    0 0 18px #00f7ff,
+    0 0 32px #0ff,
+    0 2px 8px #003366;
+  animation: main-title-glow 2.5s infinite alternate;
+}
+@keyframes main-title-glow {
+  0% { text-shadow: 0 0 8px #00f7ff, 0 0 16px #0ff, 0 2px 8px #003366; }
+  100% { text-shadow: 0 0 32px #00f7ff, 0 0 64px #0ff, 0 2px 16px #003366; }
+}
+.main-lead {
+  font-size: 1.15rem;
+  color: #e0f7fa;
+  margin-bottom: 2.2rem;
+  line-height: 1.7;
+  letter-spacing: 0.04em;
+  text-shadow: 0 0 8px #00f7ff88, 0 0 2px #fff;
+  font-weight: 500;
+  animation: main-lead-fadein 1.2s;
+}
+@keyframes main-lead-fadein {
+  from { opacity: 0; transform: translateY(20px);}
+  to { opacity: 1; transform: none;}
+}
+</style>
 
 <br>
 <h1> ＜動画投稿のお知らせ＞ </h1>
