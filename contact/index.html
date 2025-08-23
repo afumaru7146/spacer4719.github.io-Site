@@ -94,11 +94,42 @@
     </div>
   </header>
     
+<style>
+.main-title {
+  font-size: 3.2rem;
+  color: #fff;
+  font-weight: bold;
+  margin-top: 3.5rem;
+  margin-bottom: 1.2rem;
+  letter-spacing: 0.12em;
+  text-shadow:
+    0 0 18px #00f7ff,
+    0 0 32px #0ff,
+    0 2px 8px #003366;
+  animation: main-title-glow 2.5s infinite alternate;
+}
+@keyframes main-title-glow {
+  0% { text-shadow: 0 0 8px #00f7ff, 0 0 16px #0ff, 0 2px 8px #003366; }
+  100% { text-shadow: 0 0 32px #00f7ff, 0 0 64px #0ff, 0 2px 16px #003366; }
+}
+.main-lead {
+  font-size: 1.15rem;
+  color: #e0f7fa;
+  margin-bottom: 2.2rem;
+  line-height: 1.7;
+  letter-spacing: 0.04em;
+  text-shadow: 0 0 8px #00f7ff88, 0 0 2px #fff;
+  font-weight: 500;
+  animation: main-lead-fadein 1.2s;
+}
+@keyframes main-lead-fadein {
+  from { opacity: 0; transform: translateY(20px);}
+  to { opacity: 1; transform: none;}
+}
+</style>
 
-
-　  <h1> </h1>
-    <h1>お問い合わせ</h1>
-    <p>お問い合わせはこちらから</p>
+    <h1 class="main-title">お問い合わせ</h1>
+    <p class="main-lead">お問い合わせはこちらから</p>
      <p>𝕏 (旧: Twitter): <a href="https://x.com/spacer4719/" target="_blank">@spacer4719</a><br>
         Discord: <a href="https://discord.com/users/817430524778905680" target="_blank">@spacer4719</a><br>
         Gmail: spacer4719@gmail.com<br></p>
