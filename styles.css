@@ -101,3 +101,20 @@ nav ul li a:focus {
   text-decoration: none;
   outline: none;
 }
+
+img,video,iframe {max-width:100%;height:auto}
+html{scroll-behavior:smooth}
+body{-webkit-text-size-adjust:100%}
+.container{width:min(100% - 32px, 960px);margin-inline:auto}
+
+/* ナビが横並び前提なら、折返し＋タップしやすく */
+.nav a{display:inline-block;padding:.5rem .8rem;border-radius:999px}
+@media (max-width:768px){
+  .nav{display:flex;flex-wrap:wrap;gap:8px}
+}
+
+/* 表のはみ出し対策 */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th,td{padding:.6rem .8rem;border-bottom:1px solid rgba(0,0,0,.08)
+}
