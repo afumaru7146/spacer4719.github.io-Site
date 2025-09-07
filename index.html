@@ -58,6 +58,69 @@
     nav a:hover {
       text-decoration: underline;
     }
+
+  @media (max-width: 768px) {
+    body {
+      padding: 1rem;
+      font-size: 0.9rem;
+    }
+
+    .main-title {
+      font-size: 2rem;
+      margin-top: 2rem;
+    }
+
+    .main-lead {
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+
+    .main-banner-wrap {
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+    }
+
+    .main-banner-img-full {
+      width: 100%;
+      height: auto;
+    }
+
+    nav ul {
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    nav a {
+      font-size: 1rem;
+      padding: 0.5em 1em;
+    }
+
+    .footer-bar {
+      height: auto;
+      padding: 1rem;
+      text-align: center;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .main-title {
+      font-size: 1.8rem;
+    }
+
+    .main-lead {
+      font-size: 0.9rem;
+    }
+
+    nav ul {
+      gap: 0.5rem;
+    }
+
+    nav a {
+      font-size: 0.9rem;
+      padding: 0.4em 0.8em;
+    }
+  }
   </style>
 </head>
 </html>
