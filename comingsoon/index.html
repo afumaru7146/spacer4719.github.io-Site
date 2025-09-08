@@ -94,8 +94,20 @@
   </header>
 
 <h1 class="comingsoon-title">New Project Coming Soon...</h1>
-<div class="redirect-msg">
+<!-------<div class="redirect-msg">
   <span id="countdown">5</span>秒後にリダイレクトされます
+</div>------->
+
+<div class="youtube-video-wrap">
+  <iframe 
+    width="560" 
+    height="315" 
+    src="https://www.youtube.com/embed/動画ID" 
+    title="YouTube video player" 
+    frameborder="0" 
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+    allowfullscreen>
+  </iframe>
 </div>
 
 <style>
@@ -141,10 +153,31 @@
   50% { transform: translateY(-8px) scale(1.04); }
   100% { transform: translateY(0); }
 }
+
+.youtube-video-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 2rem auto;
+  max-width: 100%;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0, 247, 255, 0.2);
+}
+.youtube-video-wrap iframe {
+  width: 100%;
+  max-width: 800px;
+  height: 450px;
+  border: none;
+}
+@media (max-width: 768px) {
+  .youtube-video-wrap iframe {
+    height: 250px;
+  }
+}
 </style>
 
-
-<meta http-equiv="refresh" content="5; url=https://spacer4719.f5.si/cominsoon." />
+<!---------<meta http-equiv="refresh" content="5; url=https://spacer4719.f5.si/cominsoon." />------>
 
 <div style="
     width: 100vw;
