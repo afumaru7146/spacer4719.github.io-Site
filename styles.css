@@ -102,9 +102,8 @@ nav ul li a:focus {
   outline: none;
 }
 
-@media screen and (max-width: 1023px)
-{
+@media screen and (max-width: 480px){
   :root {
-    --main-pad: 16px 3rem;
+    --main-pad: 12px 1.5rem;
   }
 }
