@@ -65,11 +65,29 @@ nav ul li a:focus {
   display: flex; 
   align-items: center; 
   justify-content: center;
+  width: 100%;
 }
 
 .link-content {
-  background: #002451; border-radius: 24px; box-shadow: 0 0 32px #00f7ff55, 0 0 0 8px #013060 inset; padding: 2rem 2.5rem; display: flex; align-items: center; gap: 2.5rem; max-width: 1100px;
+  background: #002451; 
+  border-radius: 24px; 
+  box-shadow: 0 0 32px #00f7ff55, 0 0 0 8px #013060 inset; 
+  padding: 2rem 2.5rem; 
+  display: flex; 
+  justify-content: center;
+  gap: 1.5rem;
   flex-wrap: wrap;
+  flex-direction: column;
+  height: 100%;
+}
+
+.link-small {
+  width: unset;
+  height: stretch;
+}
+
+.link-small > .link-content {
+  max-width: 180px;
 }
 
 .link-image {
@@ -85,11 +103,12 @@ nav ul li a:focus {
 
 .link-image > img {
   display:block; 
-  max-width: 480px; 
+  width: 480px; 
   height: 100%; 
   object-fit: cover; 
   border-radius: 13px; 
   margin: 0;
+  max-width: 100%;
 }
 
 .link-detail {
@@ -97,9 +116,24 @@ nav ul li a:focus {
 }
 
 .link-title {
-  color:#00f7ff; font-size:2rem; font-weight:bold; text-shadow:0 0 12px #00f7ff;
+  color:#00f7ff; 
+  font-size:2rem; 
+  font-weight:bold; 
+  text-shadow:0 0 12px #00f7ff;
+  text-align: start;
+  overflow-wrap: anywhere;
 }
 
 .link-button {
   margin-top:1.2rem; color:#000000; background:#00f7ff; border-radius:8px; padding:0.5em 1.5em; font-weight:bold; text-decoration:none; font-size:1.1rem; box-shadow:0 0 12px #00f7ff;
+}
+
+.small-links {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 1.5rem;
+  max-width: 900px;
+  flex-wrap: wrap;
+  margin: 0 auto;
 }
