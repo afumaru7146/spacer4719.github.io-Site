@@ -59,11 +59,25 @@ body {
   font-family: 'Inter', sans-serif;
 }
 
+header {
+  width: 100vw;
+  position: fixed;
+  z-index: 100;
+  left: 0;
+  top: 0;
+}
+
+header > div[style="height:64px;"] {
+  pointer-events: none;
+  user-select: none;
+  touch-action: none;
+}
+
 nav {
   width:100%;
   margin:0; 
   padding:0; 
-  position:fixed; 
+  position:relative; 
   top:0; 
   left:0; 
   z-index:100; 
@@ -155,16 +169,22 @@ nav ul li a:focus,
     max-width: 100vw;
     height: calc(100vh - 64px);
     top: 64px;
-    right: 0;
+    right: calc(-1rem - min(20rem, 100vw));
     bottom: 0;
     left: auto;
     background: #10316d;
     box-shadow: 4px 0 24px #003dc255;
     transition: opacity .2s, right .2s;
+    pointer-events: none;
+    user-select: none;
+    touch-action: none;
   }
-
+  
   .navbar-links.navbar-active {
-    right: calc(-1rem - min(20rem, 100vw))
+    right: 0;
+    pointer-events: auto;
+    user-select: auto;
+    touch-action: auto;
   }
 
   nav .links {
@@ -177,5 +197,6 @@ nav ul li a:focus,
 
   nav ul {
     flex-direction: column;
+    height: 100%;
   }
 }
