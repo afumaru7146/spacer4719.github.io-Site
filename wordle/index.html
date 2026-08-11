@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wordle Clone</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #ffffff;
+    color: #000000;
+}
+
+header {
+    height: 64px;
+    border-bottom: 1px solid #d3d6da;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.logo {
+    font-size: 36px;
+    font-weight: bold;
+    letter-spacing: 3px;
+}
+
+.header-buttons {
+    position: absolute;
+    right: 20px;
+    display: flex;
+    gap: 12px;
+}
+
+.header-buttons button {
+    border: none;
+    background: none;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+main {
+    width: 100%;
+    max-width: 500px;
+    margin: 20px auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#message {
+    height: 40px;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+#board {
+    display: grid;
+    grid-template-columns: repeat(5, 62px);
+    grid-template-rows: repeat(6, 62px);
+    gap: 5px;
+}
+
+.tile {
+    width: 62px;
+    height: 62px;
+
+    border: 2px solid #d3d6da;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-size: 32px;
+    font-weight: bold;
+
+    text-transform: uppercase;
+}
+
+.tile.correct {
+    background: #6aaa64;
+    border-color: #6aaa64;
+    color: white;
+}
+
+.tile.present {
+    background: #c9b458;
+    border-color: #c9b458;
+    color: white;
+}
+
+.tile.absent {
+    background: #787c7e;
+    border-color: #787c7e;
+    color: white;
+}
+
+#keyboard {
+    margin-top: 30px;
+    width: 100%;
+    max-width: 500px;
+}
+
+.key-row {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    margin-bottom: 7px;
+}
+
+.key {
+    height: 58px;
+    min-width: 43px;
+
+    border: none;
+    border-radius: 4px;
+
+    background: #d3d6da;
+
+    font-size: 14px;
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+.key.wide {
+    min-width: 65px;
+}
+
+.key.correct {
+    background: #6aaa64;
+    color: white;
+}
+
+.key.present {
+    background: #c9b458;
+    color: white;
+}
+
+.key.absent {
+    background: #787c7e;
+    color: white;
+}
+
+@media (max-width: 500px) {
+
+    #board {
+        grid-template-columns: repeat(5, 55px);
+        grid-template-rows: repeat(6, 55px);
+    }
+
+    .tile {
+        width: 55px;
+        height: 55px;
+        font-size: 28px;
+    }
+
+    .key {
+        min-width: 32px;
+        height: 52px;
+    }
+
+    .key.wide {
+        min-width: 55px;
+    }
+
+    .logo {
+        font-size: 28px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+
+    <div class="logo">
+        WORDLE
+    </div>
+
+    <div class="header-buttons">
+        <button onclick="showHelp()">?</button>
+        <button onclick="showStats()">📊</button>
+    </div>
+
+</header>
+
+<main>
+
+    <div id="message"></div>
+
+    <div id="board"></div>
+
+    <div id="keyboard">
+
+        <div class="key-row">
+            <button class="key" data-key="Q">Q</button>
+            <button class="key" data-key="W">W</button>
+            <button class="key" data-key="E">E</button>
+            <button class="key" data-key="R">R</button>
+            <button class="key" data-key="T">T</button>
+            <button class="key" data-key="Y">Y</button>
+            <button class="key" data-key="U">U</button>
+            <button class="key" data-key="I">I</button>
+            <button class="key" data-key="O">O</button>
+            <button class="key" data-key="P">P</button>
+        </div>
+
+        <div class="key-row">
+            <button class="key" data-key="A">A</button>
+            <button class="key" data-key="S">S</button>
+            <button class="key" data-key="D">D</button>
+            <button class="key" data-key="F">F</button>
+            <button class="key" data-key="G">G</button>
+            <button class="key" data-key="H">H</button>
+            <button class="key" data-key="J">J</button>
+            <button class="key" data-key="K">K</button>
+            <button class="key" data-key="L">L</button>
+        </div>
+
+        <div class="key-row">
+            <button class="key wide" data-key="ENTER">ENTER</button>
+            <button class="key" data-key="Z">Z</button>
+            <button class="key" data-key="X">X</button>
+            <button class="key" data-key="C">C</button>
+            <button class="key" data-key="V">V</button>
+            <button class="key" data-key="B">B</button>
+            <button class="key" data-key="N">N</button>
+            <button class="key" data-key="M">M</button>
+            <button class="key wide" data-key="BACKSPACE">⌫</button>
+        </div>
+
+    </div>
+
+</main>
+
+<script>
+
+const answer = "APPLE";
+
+const maxRows = 6;
+const wordLength = 5;
+
+let currentRow = 0;
+let currentGuess = "";
+
+const board = document.getElementById("board");
+const message = document.getElementById("message");
+
+
+// -------------------------
+// ボード作成
+// -------------------------
+
+for (let i = 0; i < maxRows * wordLength; i++) {
+
+    const tile = document.createElement("div");
+
+    tile.className = "tile";
+
+    board.appendChild(tile);
+}
+
+
+// -------------------------
+// キーボード
+// -------------------------
+
+document.querySelectorAll(".key").forEach(key => {
+
+    key.addEventListener("click", () => {
+
+        handleKey(key.dataset.key);
+
+    });
+
+});
+
+
+// -------------------------
+// PCキーボード
+// -------------------------
+
+document.addEventListener("keydown", event => {
+
+    let key = event.key.toUpperCase();
+
+    if (key === "ENTER") {
+        handleKey("ENTER");
+    }
+
+    else if (key === "BACKSPACE") {
+        handleKey("BACKSPACE");
+    }
+
+    else if (/^[A-Z]$/.test(key)) {
+        handleKey(key);
+    }
+
+});
+
+
+// -------------------------
+// 入力処理
+// -------------------------
+
+function handleKey(key) {
+
+    if (currentRow >= maxRows) {
+        return;
+    }
+
+
+    // 文字入力
+
+    if (/^[A-Z]$/.test(key)) {
+
+        if (currentGuess.length < wordLength) {
+
+            currentGuess += key;
+
+            updateBoard();
+
+        }
+
+        return;
+    }
+
+
+    // 削除
+
+    if (key === "BACKSPACE") {
+
+        currentGuess = currentGuess.slice(0, -1);
+
+        updateBoard();
+
+        return;
+    }
+
+
+    // 決定
+
+    if (key === "ENTER") {
+
+        submitGuess();
+
+    }
+
+}
+
+
+// -------------------------
+// ボード更新
+// -------------------------
+
+function updateBoard() {
+
+    const start = currentRow * wordLength;
+
+    for (let i = 0; i < wordLength; i++) {
+
+        const tile = board.children[start + i];
+
+        tile.textContent = currentGuess[i] || "";
+
+    }
+
+}
+
+
+// -------------------------
+// 回答チェック
+// -------------------------
+
+function submitGuess() {
+
+    if (currentGuess.length !== wordLength) {
+
+        showMessage("5文字入力してください");
+
+        return;
+    }
+
+
+    const guess = currentGuess;
+
+    const start = currentRow * wordLength;
+
+    const answerLetters = answer.split("");
+
+    const result = Array(wordLength).fill("absent");
+
+
+    // 正解位置
+
+    for (let i = 0; i < wordLength; i++) {
+
+        if (guess[i] === answer[i]) {
+
+            result[i] = "correct";
+
+            answerLetters[i] = null;
+
+        }
+
+    }
+
+
+    // 含まれている文字
+
+    for (let i = 0; i < wordLength; i++) {
+
+        if (result[i] === "correct") {
+            continue;
+        }
+
+        const index = answerLetters.indexOf(guess[i]);
+
+        if (index !== -1) {
+
+            result[i] = "present";
+
+            answerLetters[index] = null;
+
+        }
+
+    }
+
+
+    // 色を反映
+
+    for (let i = 0; i < wordLength; i++) {
+
+        board.children[start + i]
+            .classList.add(result[i]);
+
+        updateKeyboard(
+            guess[i],
+            result[i]
+        );
+
+    }
+
+
+    // 勝利
+
+    if (guess === answer) {
+
+        showMessage("🎉 正解！");
+
+        saveStats(true);
+
+        currentRow = maxRows;
+
+        return;
+    }
+
+
+    currentRow++;
+
+    currentGuess = "";
+
+
+    // ゲームオーバー
+
+    if (currentRow >= maxRows) {
+
+        showMessage("答えは " + answer);
+
+        saveStats(false);
+
+    }
+
+}
+
+
+// -------------------------
+// キーボード色更新
+// -------------------------
+
+function updateKeyboard(letter, state) {
+
+    const key = document.querySelector(
+        `.key[data-key="${letter}"]`
+    );
+
+    if (!key) return;
+
+
+    // correctを最優先
+
+    if (state === "correct") {
+
+        key.classList.remove("present", "absent");
+        key.classList.add("correct");
+
+    }
+
+    else if (
+        state === "present" &&
+        !key.classList.contains("correct")
+    ) {
+
+        key.classList.remove("absent");
+        key.classList.add("present");
+
+    }
+
+    else if (
+        state === "absent" &&
+        !key.classList.contains("correct") &&
+        !key.classList.contains("present")
+    ) {
+
+        key.classList.add("absent");
+
+    }
+
+}
+
+
+// -------------------------
+// メッセージ
+// -------------------------
+
+function showMessage(text) {
+
+    message.textContent = text;
+
+    setTimeout(() => {
+
+        message.textContent = "";
+
+    }, 2500);
+
+}
+
+
+// -------------------------
+// 統計
+// -------------------------
+
+function saveStats(win) {
+
+    let games =
+        Number(localStorage.getItem("games") || 0);
+
+    let wins =
+        Number(localStorage.getItem("wins") || 0);
+
+
+    games++;
+
+    if (win) {
+        wins++;
+    }
+
+
+    localStorage.setItem("games", games);
+    localStorage.setItem("wins", wins);
+
+}
+
+
+function showStats() {
+
+    const games =
+        Number(localStorage.getItem("games") || 0);
+
+    const wins =
+        Number(localStorage.getItem("wins") || 0);
+
+    alert(
+        "プレイ回数: " + games +
+        "\n勝利回数: " + wins
+    );
+
+}
+
+
+function showHelp() {
+
+    alert(
+        "Wordleの遊び方\n\n" +
+        "5文字の英単語を入力してください。\n\n" +
+        "🟩 正しい文字・正しい位置\n" +
+        "🟨 正しい文字・位置が違う\n" +
+        "⬛ 含まれていない文字\n\n" +
+        "6回以内に正解を目指します。"
+    );
+
+}
+
+</script>
+
+</body>
+</html>
