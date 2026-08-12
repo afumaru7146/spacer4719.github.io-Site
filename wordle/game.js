@@ -1,98 +1,62 @@
+// ==========================================
+// WORDLE CLONE - GAME.JS
+// ==========================================
 
-// ======================================
-// Wordle Clone
-// ======================================
-
-
-// ------------------------------
-// 設定
-// ------------------------------
-
-const WORD_LENGTH = 5;
-const MAX_ATTEMPTS = 6;
-
-
-// ------------------------------
-// 単語リスト
-// ------------------------------
-
-const WORDS = [
-
-    "APPLE",
-    "HOUSE",
-    "MOUSE",
-    "PLANT",
-    "WORLD",
-    "LIGHT",
-    "WATER",
-    "MUSIC",
-    "STONE",
-    "GREEN",
-    "BLACK",
-    "WHITE",
-    "PHONE",
-    "CLOUD",
-    "NIGHT",
-    "HEART",
-    "EARTH",
-    "SPACE",
-    "TRAIN",
-    "CHAIR",
-    "BREAD",
-    "DREAM",
-    "SMILE",
-    "BRAVE",
-    "SOUND",
-    "RIVER",
-    "BEACH",
-    "CROWN",
-    "SNAKE",
-    "TIGER",
-    "HYPED",
-    "HYPER",
-    "LOVEL",
-    "WIDER",
-
-];
-
+"use strict";
 
 
 // ==========================================
-// Wordle Game Engine
+// 基本設定
 // ==========================================
 
 const WORD_LENGTH = 5;
 const MAX_ATTEMPTS = 6;
 
-const STORAGE_KEY = "wordle-save-v4";
+const GAME_STORAGE_KEY = "wordle-game-v5";
+const STATS_STORAGE_KEY = "wordle-statistics-v5";
+const THEME_STORAGE_KEY = "wordle-dark";
 
 
 // ==========================================
-// 今日の日付
+// DOM
+// ==========================================
+
+const board = document.getElementById("board");
+const message = document.getElementById("message");
+
+
+// ==========================================
+// ゲーム状態
+// ==========================================
+
+let currentRow = 0;
+let currentGuess = "";
+let guesses = [];
+let gameOver = false;
+
+
+// ==========================================
+// 日付
 // ==========================================
 
 function getTodayKey() {
 
     const date = new Date();
 
-    const year =
-        date.getFullYear();
+    const year = date.getFullYear();
 
     const month =
-        String(date.getMonth() + 1)
-            .padStart(2, "0");
+        String(date.getMonth() + 1).padStart(2, "0");
 
     const day =
-        String(date.getDate())
-            .padStart(2, "0");
+        String(date.getDate()).padStart(2, "0");
 
     return `${year}-${month}-${day}`;
-
 }
 
 
 // ==========================================
-// 日付から問題番号を作る
+// パズル番号
 // ==========================================
 
 function getPuzzleNumber() {
@@ -109,7 +73,6 @@ function getPuzzleNumber() {
     return Math.floor(
         (today - start) / 86400000
     );
-
 }
 
 
@@ -128,51 +91,41 @@ function getDailyAnswer() {
 
 }
 
-
 const ANSWER =
     getDailyAnswer();
 
 
 // ==========================================
-// 状態
+// 初期化
 // ==========================================
 
-let currentRow = 0;
+function init() {
 
-let currentGuess = "";
+    createBoard();
 
-let gameOver = false;
+    setupKeyboard();
 
-let guesses = [];
+    setupPhysicalKeyboard();
 
+    setupModals();
 
-// ==========================================
-// DOM
-// ==========================================
+    setupSettings();
 
-const board = document.getElementById("board");
+    loadGame();
 
-function createBoard() {
-    board.innerHTML = "";
-
-    for (let i = 0; i < 6 * 5; i++) {
-        const tile = document.createElement("div");
-        tile.className = "tile";
-        board.appendChild(tile);
-    }
 }
 
-createBoard();
-
-const message =
-    document.getElementById("message");
-
 
 // ==========================================
-// ボード生成
+// 盤面生成
 // ==========================================
 
 function createBoard() {
+
+    if (!board) {
+        console.error("board element not found");
+        return;
+    }
 
     board.innerHTML = "";
 
@@ -188,69 +141,78 @@ function createBoard() {
         tile.className = "tile";
 
         board.appendChild(tile);
-
     }
 
 }
 
-createBoard();
+
+// ==========================================
+// クリックキーボード
+// ==========================================
+
+function setupKeyboard() {
+
+    document
+        .querySelectorAll(".key")
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    handleKey(
+                        button.dataset.key
+                    );
+
+                }
+            );
+
+        });
+
+}
 
 
 // ==========================================
-// キーボード
+// PCキーボード
 // ==========================================
 
-document
-    .querySelectorAll(".key")
-    .forEach(key => {
+function setupPhysicalKeyboard() {
 
-        key.addEventListener(
-            "click",
-            () => {
+    document.addEventListener(
+        "keydown",
+        event => {
 
-                handleKey(
-                    key.dataset.key
-                );
+            if (event.key === "Enter") {
+
+                event.preventDefault();
+
+                handleKey("ENTER");
+
+                return;
+            }
+
+            if (event.key === "Backspace") {
+
+                event.preventDefault();
+
+                handleKey("BACKSPACE");
+
+                return;
+            }
+
+            const key =
+                event.key.toUpperCase();
+
+            if (/^[A-Z]$/.test(key)) {
+
+                handleKey(key);
 
             }
-        );
-
-    });
-
-
-document.addEventListener(
-    "keydown",
-    event => {
-
-        if (event.key === "Enter") {
-
-            handleKey("ENTER");
-
-            return;
 
         }
+    );
 
-        if (
-            event.key === "Backspace"
-        ) {
-
-            handleKey("BACKSPACE");
-
-            return;
-
-        }
-
-        const key =
-            event.key.toUpperCase();
-
-        if (/^[A-Z]$/.test(key)) {
-
-            handleKey(key);
-
-        }
-
-    }
-);
+}
 
 
 // ==========================================
@@ -263,6 +225,8 @@ function handleKey(key) {
         return;
     }
 
+
+    // 文字入力
 
     if (/^[A-Z]$/.test(key)) {
 
@@ -281,6 +245,8 @@ function handleKey(key) {
     }
 
 
+    // Backspace
+
     if (key === "BACKSPACE") {
 
         currentGuess =
@@ -289,9 +255,10 @@ function handleKey(key) {
         updateCurrentRow();
 
         return;
-
     }
 
+
+    // Enter
 
     if (key === "ENTER") {
 
@@ -303,7 +270,7 @@ function handleKey(key) {
 
 
 // ==========================================
-// 入力表示
+// 現在の行を表示
 // ==========================================
 
 function updateCurrentRow() {
@@ -321,20 +288,27 @@ function updateCurrentRow() {
         const tile =
             board.children[start + i];
 
+        if (!tile) {
+            return;
+        }
+
         tile.textContent =
             currentGuess[i] || "";
 
     }
 
 
+    // Popアニメーション
+
     if (currentGuess.length > 0) {
 
+        const index =
+            start +
+            currentGuess.length -
+            1;
+
         const tile =
-            board.children[
-                start +
-                currentGuess.length -
-                1
-            ];
+            board.children[index];
 
         tile.classList.remove("pop");
 
@@ -348,7 +322,7 @@ function updateCurrentRow() {
 
 
 // ==========================================
-// 回答
+// 回答送信
 // ==========================================
 
 function submitGuess() {
@@ -362,12 +336,13 @@ function submitGuess() {
             "5文字入力してください"
         );
 
-        shake();
+        shakeRow();
 
         return;
-
     }
 
+
+    // 辞書チェック
 
     if (
         !VALID_WORDS.has(currentGuess)
@@ -377,42 +352,46 @@ function submitGuess() {
             "その単語は辞書にありません"
         );
 
-        shake();
+        shakeRow();
 
         return;
-
     }
 
 
+    const guess =
+        currentGuess;
+
     const result =
-        checkGuess(currentGuess);
+        checkGuess(guess);
 
 
     guesses.push({
-        word: currentGuess,
+        word: guess,
         result: result
     });
 
 
-    reveal(
-        currentGuess,
+    revealTiles(
+        guess,
         result
     );
 
 
-    saveState();
+    saveGame();
 
 
-    if (
-        currentGuess === ANSWER
-    ) {
+    // 正解
+
+    if (guess === ANSWER) {
 
         gameOver = true;
 
-        finishGame(true);
+        setTimeout(
+            () => finishGame(true),
+            1800
+        );
 
         return;
-
     }
 
 
@@ -421,14 +400,18 @@ function submitGuess() {
     currentGuess = "";
 
 
+    // 6回失敗
+
     if (
-        currentRow >=
-        MAX_ATTEMPTS
+        currentRow >= MAX_ATTEMPTS
     ) {
 
         gameOver = true;
 
-        finishGame(false);
+        setTimeout(
+            () => finishGame(false),
+            1800
+        );
 
     }
 
@@ -449,7 +432,7 @@ function checkGuess(guess) {
         ANSWER.split("");
 
 
-    // 正解
+    // 正しい位置
 
     for (
         let i = 0;
@@ -470,7 +453,7 @@ function checkGuess(guess) {
     }
 
 
-    // 含まれている
+    // 含まれているが位置が違う
 
     for (
         let i = 0;
@@ -481,6 +464,7 @@ function checkGuess(guess) {
         if (
             result[i] === "correct"
         ) {
+
             continue;
         }
 
@@ -508,10 +492,10 @@ function checkGuess(guess) {
 
 
 // ==========================================
-// 結果表示
+// タイル表示
 // ==========================================
 
-function reveal(
+function revealTiles(
     guess,
     result
 ) {
@@ -530,9 +514,11 @@ function reveal(
             () => {
 
                 const tile =
-                    board.children[
-                        start + i
-                    ];
+                    board.children[start + i];
+
+                if (!tile) {
+                    return;
+                }
 
 
                 tile.classList.add(
@@ -567,10 +553,10 @@ function reveal(
 
 
 // ==========================================
-// キーボード状態
+// キーボード色
 // ==========================================
 
-const priority = {
+const STATE_PRIORITY = {
 
     absent: 1,
     present: 2,
@@ -586,7 +572,7 @@ function updateKeyboard(
 
     const key =
         document.querySelector(
-            `[data-key="${letter}"]`
+            `.key[data-key="${letter}"]`
         );
 
 
@@ -601,22 +587,23 @@ function updateKeyboard(
 
     if (
         oldState &&
-        priority[oldState] >=
-        priority[state]
+        STATE_PRIORITY[oldState] >=
+        STATE_PRIORITY[state]
     ) {
 
         return;
-
     }
 
 
     key.dataset.state = state;
+
 
     key.classList.remove(
         "correct",
         "present",
         "absent"
     );
+
 
     key.classList.add(state);
 
@@ -627,7 +614,7 @@ function updateKeyboard(
 // Shake
 // ==========================================
 
-function shake() {
+function shakeRow() {
 
     const start =
         currentRow * WORD_LENGTH;
@@ -642,13 +629,54 @@ function shake() {
         const tile =
             board.children[start + i];
 
-        tile.classList.remove("shake");
+        if (!tile) {
+            continue;
+        }
+
+
+        tile.classList.remove(
+            "shake"
+        );
 
         void tile.offsetWidth;
 
-        tile.classList.add("shake");
+        tile.classList.add(
+            "shake"
+        );
 
     }
+
+}
+
+
+// ==========================================
+// メッセージ
+// ==========================================
+
+let messageTimer = null;
+
+
+function showMessage(text) {
+
+    if (!message) {
+        return;
+    }
+
+
+    clearTimeout(messageTimer);
+
+    message.textContent = text;
+
+
+    messageTimer =
+        setTimeout(
+            () => {
+
+                message.textContent = "";
+
+            },
+            2500
+        );
 
 }
 
@@ -657,7 +685,7 @@ function shake() {
 // ゲーム保存
 // ==========================================
 
-function saveState() {
+function saveGame() {
 
     const data = {
 
@@ -675,7 +703,7 @@ function saveState() {
 
 
     localStorage.setItem(
-        STORAGE_KEY,
+        GAME_STORAGE_KEY,
         JSON.stringify(data)
     );
 
@@ -686,11 +714,11 @@ function saveState() {
 // ゲーム復元
 // ==========================================
 
-function loadState() {
+function loadGame() {
 
     const saved =
         localStorage.getItem(
-            STORAGE_KEY
+            GAME_STORAGE_KEY
         );
 
 
@@ -705,7 +733,7 @@ function loadState() {
             JSON.parse(saved);
 
 
-        // 日付が違えば
+        // 日付が違う場合は
         // 新しいゲーム
 
         if (
@@ -714,21 +742,22 @@ function loadState() {
         ) {
 
             return;
-
         }
 
 
         currentRow =
-            data.row || 0;
+            Number(data.row) || 0;
 
         currentGuess =
             data.currentGuess || "";
 
         guesses =
-            data.guesses || [];
+            Array.isArray(data.guesses)
+                ? data.guesses
+                : [];
 
         gameOver =
-            data.gameOver || false;
+            Boolean(data.gameOver);
 
 
         // 過去の回答を復元
@@ -737,8 +766,7 @@ function loadState() {
             (guessData, row) => {
 
                 const start =
-                    row *
-                    WORD_LENGTH;
+                    row * WORD_LENGTH;
 
 
                 for (
@@ -751,6 +779,11 @@ function loadState() {
                         board.children[
                             start + i
                         ];
+
+
+                    if (!tile) {
+                        continue;
+                    }
 
 
                     tile.textContent =
@@ -777,11 +810,15 @@ function loadState() {
 
 
     }
+    catch (error) {
 
-    catch {
+        console.error(
+            "ゲームデータの復元に失敗:",
+            error
+        );
 
         localStorage.removeItem(
-            STORAGE_KEY
+            GAME_STORAGE_KEY
         );
 
     }
@@ -789,84 +826,15 @@ function loadState() {
 }
 
 
-loadState();
-
-
 // ==========================================
-// 終了
+// 統計取得
 // ==========================================
-
-function finishGame(win) {
-
-    setTimeout(() => {
-
-        if (win) {
-
-            showMessage(
-                `🎉 ${currentRow + 1}回で正解！`
-            );
-
-
-            const start =
-                currentRow *
-                WORD_LENGTH;
-
-
-            for (
-                let i = 0;
-                i < WORD_LENGTH;
-                i++
-            ) {
-
-                setTimeout(() => {
-
-                    board.children[
-                        start + i
-                    ].classList.add("win");
-
-                }, i * 120);
-
-            }
-
-        }
-
-        else {
-
-            showMessage(
-                `答えは ${ANSWER}`
-            );
-
-        }
-
-
-        updateStatistics(win);
-
-        saveState();
-
-
-    }, 1800);
-
-}
-
-
-
-
-// ==========================================
-// 統計
-// ==========================================
-// ==========================================
-// Statistics
-// ==========================================
-
-const STATISTICS_KEY =
-    "wordle-statistics-v5";
-
 
 function getStatistics() {
 
     return JSON.parse(
         localStorage.getItem(
-            STATISTICS_KEY
+            STATS_STORAGE_KEY
         )
     ) || {
 
@@ -895,7 +863,7 @@ function getStatistics() {
 
 
 // ==========================================
-// 結果保存
+// 統計更新
 // ==========================================
 
 function updateStatistics(win) {
@@ -936,7 +904,6 @@ function updateStatistics(win) {
         }
 
     }
-
     else {
 
         stats.streak = 0;
@@ -945,9 +912,218 @@ function updateStatistics(win) {
 
 
     localStorage.setItem(
-        STATISTICS_KEY,
+        STATS_STORAGE_KEY,
         JSON.stringify(stats)
     );
+
+}
+
+
+// ==========================================
+// ゲーム終了
+// ==========================================
+
+function finishGame(win) {
+
+    if (win) {
+
+        showMessage(
+            `🎉 ${currentRow + 1}回で正解！`
+        );
+
+
+        const start =
+            currentRow * WORD_LENGTH;
+
+
+        for (
+            let i = 0;
+            i < WORD_LENGTH;
+            i++
+        ) {
+
+            setTimeout(
+                () => {
+
+                    const tile =
+                        board.children[
+                            start + i
+                        ];
+
+
+                    if (tile) {
+
+                        tile.classList.add(
+                            "win"
+                        );
+
+                    }
+
+                },
+                i * 120
+            );
+
+        }
+
+    }
+    else {
+
+        showMessage(
+            `答えは ${ANSWER}`
+        );
+
+    }
+
+
+    updateStatistics(win);
+
+    saveGame();
+
+}
+
+
+// ==========================================
+// モーダル
+// ==========================================
+
+function openModal(id) {
+
+    const modal =
+        document.getElementById(id);
+
+    if (!modal) {
+        return;
+    }
+
+    modal.classList.add("show");
+
+}
+
+
+function closeModal(id) {
+
+    const modal =
+        document.getElementById(id);
+
+    if (!modal) {
+        return;
+    }
+
+    modal.classList.remove("show");
+
+}
+
+
+function setupModals() {
+
+    const helpButton =
+        document.getElementById(
+            "helpButton"
+        );
+
+    const statsButton =
+        document.getElementById(
+            "statsButton"
+        );
+
+    const settingsButton =
+        document.getElementById(
+            "settingsButton"
+        );
+
+
+    if (helpButton) {
+
+        helpButton.addEventListener(
+            "click",
+            () => {
+
+                openModal(
+                    "helpModal"
+                );
+
+            }
+        );
+
+    }
+
+
+    if (statsButton) {
+
+        statsButton.addEventListener(
+            "click",
+            () => {
+
+                renderStatistics();
+
+                openModal(
+                    "statsModal"
+                );
+
+            }
+        );
+
+    }
+
+
+    if (settingsButton) {
+
+        settingsButton.addEventListener(
+            "click",
+            () => {
+
+                openModal(
+                    "settingsModal"
+                );
+
+            }
+        );
+
+    }
+
+
+    document
+        .querySelectorAll("[data-close]")
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    closeModal(
+                        button.dataset.close
+                    );
+
+                }
+            );
+
+        });
+
+
+    // モーダル外クリック
+
+    document
+        .querySelectorAll(".modal")
+        .forEach(modal => {
+
+            modal.addEventListener(
+                "click",
+                event => {
+
+                    if (
+                        event.target === modal
+                    ) {
+
+                        modal.classList.remove(
+                            "show"
+                        );
+
+                    }
+
+                }
+            );
+
+        });
 
 }
 
@@ -962,21 +1138,166 @@ function renderStatistics() {
         getStatistics();
 
 
-document
-    .getElementById("shareButton")
-    .addEventListener(
+    const played =
+        document.getElementById(
+            "played"
+        );
+
+    const winRate =
+        document.getElementById(
+            "winRate"
+        );
+
+    const streak =
+        document.getElementById(
+            "currentStreak"
+        );
+
+    const maxStreak =
+        document.getElementById(
+            "maxStreak"
+        );
+
+
+    if (played) {
+
+        played.textContent =
+            stats.played;
+
+    }
+
+
+    if (winRate) {
+
+        winRate.textContent =
+            stats.played === 0
+                ? 0
+                : Math.round(
+                    stats.wins /
+                    stats.played *
+                    100
+                );
+
+    }
+
+
+    if (streak) {
+
+        streak.textContent =
+            stats.streak;
+
+    }
+
+
+    if (maxStreak) {
+
+        maxStreak.textContent =
+            stats.maxStreak;
+
+    }
+
+
+    const values =
+        Object.values(
+            stats.distribution
+        );
+
+
+    const maximum =
+        Math.max(...values, 1);
+
+
+    document
+        .querySelectorAll(
+            ".distribution-row"
+        )
+        .forEach(row => {
+
+            const countElement =
+                row.querySelector(
+                    "[data-count]"
+                );
+
+
+            const valueElement =
+                row.querySelector(
+                    "strong"
+                );
+
+
+            const bar =
+                row.querySelector(
+                    ".bar span"
+                );
+
+
+            if (
+                !countElement ||
+                !valueElement ||
+                !bar
+            ) {
+
+                return;
+
+            }
+
+
+            const number =
+                countElement.dataset.count;
+
+
+            const count =
+                stats.distribution[number] || 0;
+
+
+            const percentage =
+                count === 0
+                    ? 0
+                    : Math.max(
+                        count / maximum * 100,
+                        8
+                    );
+
+
+            bar.style.width =
+                `${percentage}%`;
+
+
+            valueElement.textContent =
+                count;
+
+        });
+
+}
+
+
+// ==========================================
+// 結果共有
+// ==========================================
+
+function setupShare() {
+
+    const button =
+        document.getElementById(
+            "shareButton"
+        );
+
+
+    if (!button) {
+        return;
+    }
+
+
+    button.addEventListener(
         "click",
         async () => {
 
             const attempt =
-                gameOver &&
-                guesses.length <= 6
-                    ? guesses.length
+                gameOver
+                    ? guesses.length <= 6
+                        ? guesses.length
+                        : "X"
                     : "X";
-
-
-            const puzzle =
-                getPuzzleNumber();
 
 
             const grid =
@@ -1014,7 +1335,7 @@ document
 
 
             const text =
-`Wordle Clone ${puzzle} ${attempt}/6
+`Wordle Clone ${getPuzzleNumber()} ${attempt}/6
 
 ${grid}`;
 
@@ -1024,147 +1345,92 @@ ${grid}`;
                 await navigator.clipboard
                     .writeText(text);
 
-
                 showMessage(
                     "結果をコピーしました"
                 );
 
             }
-
             catch {
 
-                alert(text);
+                window.prompt(
+                    "結果をコピーしてください",
+                    text
+                );
 
             }
 
         }
     );
 
-
-
-
-    document.getElementById(
-        "winRate"
-    ).textContent =
-        winRate;
-
-
-    document.getElementById(
-        "currentStreak"
-    ).textContent =
-        stats.streak;
-
-
-    document.getElementById(
-        "maxStreak"
-    ).textContent =
-        stats.maxStreak;
-
-
-    const values =
-        Object.values(
-            stats.distribution
-        );
-
-
-    const maximum =
-        Math.max(
-            ...values,
-            1
-        );
-
-
-    document
-        .querySelectorAll(
-            ".distribution-row"
-        )
-        .forEach(row => {
-
-            const number =
-                row.querySelector(
-                    "[data-count]"
-                ).dataset.count;
-
-
-            const count =
-                stats.distribution[
-                    number
-                ] || 0;
-
-
-            const percentage =
-                count /
-                maximum *
-                100;
-
-
-            const bar =
-                row.querySelector(
-                    ".bar span"
-                );
-
-
-            const value =
-                row.querySelector(
-                    "strong"
-                );
-
-
-            bar.style.width =
-                `${Math.max(
-                    percentage,
-                    count > 0 ? 8 : 0
-                )}%`;
-
-
-            value.textContent =
-                count;
-
-        });
-
 }
 
 
 // ==========================================
-// 統計モーダル
+// ダークモード
 // ==========================================
 
-function openStatistics() {
+function setupSettings() {
 
-    renderStatistics();
+    const darkMode =
+        document.getElementById(
+            "darkMode"
+        );
 
-    openModal(
-        "statsModal"
+
+    if (!darkMode) {
+        return;
+    }
+
+
+    const saved =
+        localStorage.getItem(
+            THEME_STORAGE_KEY
+        ) === "true";
+
+
+    darkMode.checked = saved;
+
+
+    document.body.classList.toggle(
+        "dark",
+        saved
+    );
+
+
+    darkMode.addEventListener(
+        "change",
+        () => {
+
+            const enabled =
+                darkMode.checked;
+
+
+            document.body.classList.toggle(
+                "dark",
+                enabled
+            );
+
+
+            localStorage.setItem(
+                THEME_STORAGE_KEY,
+                enabled
+            );
+
+        }
     );
 
 }
 
 
+// ==========================================
+// 共有ボタン
+// ==========================================
+
+setupShare();
 
 
 // ==========================================
-// メッセージ
+// ゲーム開始
 // ==========================================
 
-let messageTimer;
-
-
-function showMessage(text) {
-
-    clearTimeout(messageTimer);
-
-    message.textContent = text;
-
-
-    messageTimer =
-        setTimeout(
-            () => {
-
-                message.textContent = "";
-
-            },
-            2500
-        );
-
-}
-
+init();
