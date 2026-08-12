@@ -1415,15 +1415,14 @@ function openModal(id) {
     const modal =
         document.getElementById(id);
 
-
     if (!modal) {
+        console.error(
+            `モーダル #${id} が見つかりません`
+        );
         return;
     }
 
-
-    modal.classList.add(
-        "show"
-    );
+    modal.classList.add("show");
 
 }
 
@@ -1433,15 +1432,11 @@ function closeModal(id) {
     const modal =
         document.getElementById(id);
 
-
     if (!modal) {
         return;
     }
 
-
-    modal.classList.remove(
-        "show"
-    );
+    modal.classList.remove("show");
 
 }
 
@@ -1452,12 +1447,9 @@ function closeModal(id) {
 
 function setupModals() {
 
-    /* data-close */
-
+    // 閉じるボタン
     document
-        .querySelectorAll(
-            "[data-close]"
-        )
+        .querySelectorAll("[data-close]")
         .forEach(button => {
 
             button.addEventListener(
@@ -1474,18 +1466,16 @@ function setupModals() {
         });
 
 
-    /* モーダル外クリック */
-
+    // モーダル本体
     document
-        .querySelectorAll(
-            ".modal"
-        )
+        .querySelectorAll(".wordle-modal")
         .forEach(modal => {
 
             modal.addEventListener(
                 "click",
                 event => {
 
+                    // 背景部分をクリックしたら閉じる
                     if (
                         event.target === modal
                     ) {
@@ -1503,6 +1493,34 @@ function setupModals() {
 
 }
 
+function setupStatisticsButton() {
+
+    const button =
+        document.getElementById(
+            "statsButton"
+        );
+
+    if (!button) {
+        console.error(
+            "#statsButton が見つかりません"
+        );
+        return;
+    }
+
+    button.addEventListener(
+        "click",
+        () => {
+
+            renderStatistics();
+
+            openModal(
+                "statsModal"
+            );
+
+        }
+    );
+
+}
 
 /* =========================================================
    設定
@@ -1876,6 +1894,26 @@ if (
 }
 else {
 
-    init();
+    function init() {
+
+    createBoard();
+
+    setupKeyboard();
+
+    setupPhysicalKeyboard();
+
+    setupModals();
+
+    setupSettings();
+
+    setupDictionary();
+
+    setupShare();
+
+    setupStatisticsButton();
+
+    loadGame();
+
+}
 
 }
