@@ -787,61 +787,110 @@ loadState();
 
 function finishGame(win) {
 
-    setTimeout(
-        () => {
+    setTimeout(() => {
 
-            if (win) {
+        if (win) {
 
-                showMessage(
-                    `🎉 ${currentRow + 1}回で正解！`
-                );
-
-            }
-
-            else {
-
-                showMessage(
-                    `答えは ${ANSWER}`
-                );
-
-            }
-
-
-            updateStatistics(
-                win
+            showMessage(
+                `🎉 ${currentRow + 1}回で正解！`
             );
 
 
-            saveState();
+            const start =
+                currentRow *
+                WORD_LENGTH;
 
-        },
-        1800
-    );
+
+            for (
+                let i = 0;
+                i < WORD_LENGTH;
+                i++
+            ) {
+
+                setTimeout(() => {
+
+                    board.children[
+                        start + i
+                    ].classList.add("win");
+
+                }, i * 120);
+
+            }
+
+        }
+
+        else {
+
+            showMessage(
+                `答えは ${ANSWER}`
+            );
+
+        }
+
+
+        updateStatistics(win);
+
+        saveState();
+
+
+    }, 1800);
 
 }
+
+
 
 
 // ==========================================
 // 統計
 // ==========================================
+// ==========================================
+// Statistics
+// ==========================================
+
+const STATISTICS_KEY =
+    "wordle-statistics-v5";
+
+
+function getStatistics() {
+
+    return JSON.parse(
+        localStorage.getItem(
+            STATISTICS_KEY
+        )
+    ) || {
+
+        played: 0,
+
+        wins: 0,
+
+        streak: 0,
+
+        maxStreak: 0,
+
+        distribution: {
+
+            1: 0,
+            2: 0,
+            3: 0,
+            4: 0,
+            5: 0,
+            6: 0
+
+        }
+
+    };
+
+}
+
+
+// ==========================================
+// 結果保存
+// ==========================================
 
 function updateStatistics(win) {
 
-    const key =
-        "wordle-statistics-v4";
-
-
     const stats =
-        JSON.parse(
-            localStorage.getItem(key)
-        ) || {
-
-            played: 0,
-            wins: 0,
-            streak: 0,
-            maxStreak: 0
-
-        };
+        getStatistics();
 
 
     stats.played++;
@@ -859,6 +908,22 @@ function updateStatistics(win) {
                 stats.streak
             );
 
+
+        const attempts =
+            currentRow + 1;
+
+
+        if (
+            attempts >= 1 &&
+            attempts <= 6
+        ) {
+
+            stats.distribution[
+                attempts
+            ]++;
+
+        }
+
     }
 
     else {
@@ -869,11 +934,201 @@ function updateStatistics(win) {
 
 
     localStorage.setItem(
-        key,
+        STATISTICS_KEY,
         JSON.stringify(stats)
     );
 
 }
+
+
+// ==========================================
+// 統計表示
+// ==========================================
+
+function renderStatistics() {
+
+    const stats =
+        getStatistics();
+
+
+document
+    .getElementById("shareButton")
+    .addEventListener(
+        "click",
+        async () => {
+
+            const attempt =
+                gameOver &&
+                guesses.length <= 6
+                    ? guesses.length
+                    : "X";
+
+
+            const puzzle =
+                getPuzzleNumber();
+
+
+            const grid =
+                guesses
+                    .map(item => {
+
+                        return item.result
+                            .map(state => {
+
+                                if (
+                                    state ===
+                                    "correct"
+                                ) {
+
+                                    return "🟩";
+
+                                }
+
+                                if (
+                                    state ===
+                                    "present"
+                                ) {
+
+                                    return "🟨";
+
+                                }
+
+                                return "⬛";
+
+                            })
+                            .join("");
+
+                    })
+                    .join("\n");
+
+
+            const text =
+`Wordle Clone ${puzzle} ${attempt}/6
+
+${grid}`;
+
+
+            try {
+
+                await navigator.clipboard
+                    .writeText(text);
+
+
+                showMessage(
+                    "結果をコピーしました"
+                );
+
+            }
+
+            catch {
+
+                alert(text);
+
+            }
+
+        }
+    );
+
+
+
+
+    document.getElementById(
+        "winRate"
+    ).textContent =
+        winRate;
+
+
+    document.getElementById(
+        "currentStreak"
+    ).textContent =
+        stats.streak;
+
+
+    document.getElementById(
+        "maxStreak"
+    ).textContent =
+        stats.maxStreak;
+
+
+    const values =
+        Object.values(
+            stats.distribution
+        );
+
+
+    const maximum =
+        Math.max(
+            ...values,
+            1
+        );
+
+
+    document
+        .querySelectorAll(
+            ".distribution-row"
+        )
+        .forEach(row => {
+
+            const number =
+                row.querySelector(
+                    "[data-count]"
+                ).dataset.count;
+
+
+            const count =
+                stats.distribution[
+                    number
+                ] || 0;
+
+
+            const percentage =
+                count /
+                maximum *
+                100;
+
+
+            const bar =
+                row.querySelector(
+                    ".bar span"
+                );
+
+
+            const value =
+                row.querySelector(
+                    "strong"
+                );
+
+
+            bar.style.width =
+                `${Math.max(
+                    percentage,
+                    count > 0 ? 8 : 0
+                )}%`;
+
+
+            value.textContent =
+                count;
+
+        });
+
+}
+
+
+// ==========================================
+// 統計モーダル
+// ==========================================
+
+function openStatistics() {
+
+    renderStatistics();
+
+    openModal(
+        "statsModal"
+    );
+
+}
+
+
 
 
 // ==========================================
