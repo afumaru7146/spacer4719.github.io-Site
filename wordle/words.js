@@ -345,6 +345,7 @@ const VALID_WORDS = new Set([
     "TRADE",
     "TRUST",
     "TRUTH",
+    "TYPER",
     "TWICE",
 
     "UNDER",

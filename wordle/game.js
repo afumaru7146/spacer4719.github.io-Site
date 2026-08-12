@@ -1,33 +1,33 @@
-// ==========================================
-// WORDLE CLONE - GAME.JS
-// ==========================================
-
 "use strict";
 
+/* =========================================================
+   WORDLE GAME
+   ========================================================= */
 
-// ==========================================
-// 基本設定
-// ==========================================
+
+/* =========================================================
+   基本設定
+   ========================================================= */
 
 const WORD_LENGTH = 5;
 const MAX_ATTEMPTS = 6;
 
-const GAME_STORAGE_KEY = "wordle-game-v5";
-const STATS_STORAGE_KEY = "wordle-statistics-v5";
+const GAME_STORAGE_KEY = "wordle-game-v6";
+const STATS_STORAGE_KEY = "wordle-statistics-v6";
 const THEME_STORAGE_KEY = "wordle-dark";
 
 
-// ==========================================
-// DOM
-// ==========================================
+/* =========================================================
+   DOM
+   ========================================================= */
 
 const board = document.getElementById("board");
 const message = document.getElementById("message");
 
 
-// ==========================================
-// ゲーム状態
-// ==========================================
+/* =========================================================
+   ゲーム状態
+   ========================================================= */
 
 let currentRow = 0;
 let currentGuess = "";
@@ -35,9 +35,9 @@ let guesses = [];
 let gameOver = false;
 
 
-// ==========================================
-// 日付
-// ==========================================
+/* =========================================================
+   今日の日付
+   ========================================================= */
 
 function getTodayKey() {
 
@@ -55,9 +55,9 @@ function getTodayKey() {
 }
 
 
-// ==========================================
-// パズル番号
-// ==========================================
+/* =========================================================
+   パズル番号
+   ========================================================= */
 
 function getPuzzleNumber() {
 
@@ -76,18 +76,30 @@ function getPuzzleNumber() {
 }
 
 
-// ==========================================
-// 今日の答え
-// ==========================================
+/* =========================================================
+   今日の答え
+   ========================================================= */
 
 function getDailyAnswer() {
+
+    if (
+        typeof ANSWER_WORDS === "undefined" ||
+        ANSWER_WORDS.length === 0
+    ) {
+
+        console.error(
+            "ANSWER_WORDS が見つかりません。words.jsを確認してください。"
+        );
+
+        return "APPLE";
+    }
 
     const number =
         getPuzzleNumber();
 
     return ANSWER_WORDS[
         number % ANSWER_WORDS.length
-    ];
+    ].toUpperCase();
 
 }
 
@@ -95,9 +107,9 @@ const ANSWER =
     getDailyAnswer();
 
 
-// ==========================================
-// 初期化
-// ==========================================
+/* =========================================================
+   初期化
+   ========================================================= */
 
 function init() {
 
@@ -111,19 +123,27 @@ function init() {
 
     setupSettings();
 
+    setupDictionary();
+
+    setupShare();
+
     loadGame();
 
 }
 
 
-// ==========================================
-// 盤面生成
-// ==========================================
+/* =========================================================
+   盤面生成
+   ========================================================= */
 
 function createBoard() {
 
     if (!board) {
-        console.error("board element not found");
+
+        console.error(
+            "#board が見つかりません。"
+        );
+
         return;
     }
 
@@ -141,14 +161,15 @@ function createBoard() {
         tile.className = "tile";
 
         board.appendChild(tile);
+
     }
 
 }
 
 
-// ==========================================
-// クリックキーボード
-// ==========================================
+/* =========================================================
+   クリックキーボード
+   ========================================================= */
 
 function setupKeyboard() {
 
@@ -160,9 +181,16 @@ function setupKeyboard() {
                 "click",
                 () => {
 
-                    handleKey(
-                        button.dataset.key
-                    );
+                    const key =
+                        button.dataset.key;
+
+                    if (key) {
+
+                        handleKey(
+                            key.toUpperCase()
+                        );
+
+                    }
 
                 }
             );
@@ -172,9 +200,9 @@ function setupKeyboard() {
 }
 
 
-// ==========================================
-// PCキーボード
-// ==========================================
+/* =========================================================
+   PCキーボード
+   ========================================================= */
 
 function setupPhysicalKeyboard() {
 
@@ -215,9 +243,9 @@ function setupPhysicalKeyboard() {
 }
 
 
-// ==========================================
-// キー処理
-// ==========================================
+/* =========================================================
+   キー処理
+   ========================================================= */
 
 function handleKey(key) {
 
@@ -226,7 +254,7 @@ function handleKey(key) {
     }
 
 
-    // 文字入力
+    /* 文字入力 */
 
     if (/^[A-Z]$/.test(key)) {
 
@@ -245,7 +273,7 @@ function handleKey(key) {
     }
 
 
-    // Backspace
+    /* Backspace */
 
     if (key === "BACKSPACE") {
 
@@ -258,7 +286,7 @@ function handleKey(key) {
     }
 
 
-    // Enter
+    /* Enter */
 
     if (key === "ENTER") {
 
@@ -269,11 +297,15 @@ function handleKey(key) {
 }
 
 
-// ==========================================
-// 現在の行を表示
-// ==========================================
+/* =========================================================
+   現在の行を更新
+   ========================================================= */
 
 function updateCurrentRow() {
+
+    if (!board) {
+        return;
+    }
 
     const start =
         currentRow * WORD_LENGTH;
@@ -289,7 +321,7 @@ function updateCurrentRow() {
             board.children[start + i];
 
         if (!tile) {
-            return;
+            continue;
         }
 
         tile.textContent =
@@ -297,8 +329,6 @@ function updateCurrentRow() {
 
     }
 
-
-    // Popアニメーション
 
     if (currentGuess.length > 0) {
 
@@ -310,20 +340,24 @@ function updateCurrentRow() {
         const tile =
             board.children[index];
 
-        tile.classList.remove("pop");
+        if (tile) {
 
-        void tile.offsetWidth;
+            tile.classList.remove("pop");
 
-        tile.classList.add("pop");
+            void tile.offsetWidth;
+
+            tile.classList.add("pop");
+
+        }
 
     }
 
 }
 
 
-// ==========================================
-// 回答送信
-// ==========================================
+/* =========================================================
+   回答送信
+   ========================================================= */
 
 function submitGuess() {
 
@@ -332,9 +366,11 @@ function submitGuess() {
     }
 
 
-    // 5文字未満
+    /* 5文字チェック */
+
     if (
-        currentGuess.length !== WORD_LENGTH
+        currentGuess.length !==
+        WORD_LENGTH
     ) {
 
         showMessage(
@@ -347,7 +383,20 @@ function submitGuess() {
     }
 
 
-    // 辞書チェック
+    /* 辞書チェック */
+
+    if (
+        typeof VALID_WORDS === "undefined"
+    ) {
+
+        console.error(
+            "VALID_WORDS が見つかりません。words.jsを確認してください。"
+        );
+
+        return;
+    }
+
+
     if (
         !VALID_WORDS.has(currentGuess)
     ) {
@@ -362,35 +411,43 @@ function submitGuess() {
     }
 
 
-    const guess = currentGuess;
+    const guess =
+        currentGuess;
 
-    const result = checkGuess(guess);
+
+    const result =
+        checkGuess(guess);
 
 
-    // 回答を保存
+    /* 回答を追加 */
+
     guesses.push({
+
         word: guess,
+
         result: result
+
     });
 
 
-    // 現在の行に表示
+    /* タイルを反転 */
+
     revealTiles(
         guess,
         result
     );
 
 
-    // ======================================
-    // 正解
-    // ======================================
+    /* 正解 */
 
-    if (guess === ANSWER) {
+    if (
+        guess === ANSWER
+    ) {
 
         gameOver = true;
 
-        // 正解した場合は
-        // currentRow はそのまま
+        currentGuess = "";
+
         saveGame();
 
         setTimeout(
@@ -402,18 +459,14 @@ function submitGuess() {
     }
 
 
-    // ======================================
-    // 次の行へ
-    // ======================================
+    /* 次の行へ */
 
     currentRow++;
 
     currentGuess = "";
 
 
-    // ======================================
-    // 6回目まで外れた
-    // ======================================
+    /* 6回失敗 */
 
     if (
         currentRow >= MAX_ATTEMPTS
@@ -432,18 +485,16 @@ function submitGuess() {
     }
 
 
-    // ======================================
-    // ここで保存
-    // ======================================
+    /* 正しい状態で保存 */
 
     saveGame();
 
 }
 
 
-// ==========================================
-// 判定
-// ==========================================
+/* =========================================================
+   Wordle判定
+   ========================================================= */
 
 function checkGuess(guess) {
 
@@ -455,7 +506,7 @@ function checkGuess(guess) {
         ANSWER.split("");
 
 
-    // 正しい位置
+    /* 正しい位置 */
 
     for (
         let i = 0;
@@ -476,7 +527,7 @@ function checkGuess(guess) {
     }
 
 
-    // 含まれているが位置が違う
+    /* 含まれているが位置が違う */
 
     for (
         let i = 0;
@@ -514,14 +565,18 @@ function checkGuess(guess) {
 }
 
 
-// ==========================================
-// タイル表示
-// ==========================================
+/* =========================================================
+   タイル表示
+   ========================================================= */
 
 function revealTiles(
     guess,
     result
 ) {
+
+    if (!board) {
+        return;
+    }
 
     const start =
         currentRow * WORD_LENGTH;
@@ -537,7 +592,10 @@ function revealTiles(
             () => {
 
                 const tile =
-                    board.children[start + i];
+                    board.children[
+                        start + i
+                    ];
+
 
                 if (!tile) {
                     return;
@@ -575,14 +633,16 @@ function revealTiles(
 }
 
 
-// ==========================================
-// キーボード色
-// ==========================================
+/* =========================================================
+   キーボード状態
+   ========================================================= */
 
 const STATE_PRIORITY = {
 
     absent: 1,
+
     present: 2,
+
     correct: 3
 
 };
@@ -618,7 +678,8 @@ function updateKeyboard(
     }
 
 
-    key.dataset.state = state;
+    key.dataset.state =
+        state;
 
 
     key.classList.remove(
@@ -628,16 +689,22 @@ function updateKeyboard(
     );
 
 
-    key.classList.add(state);
+    key.classList.add(
+        state
+    );
 
 }
 
 
-// ==========================================
-// Shake
-// ==========================================
+/* =========================================================
+   行を揺らす
+   ========================================================= */
 
 function shakeRow() {
+
+    if (!board) {
+        return;
+    }
 
     const start =
         currentRow * WORD_LENGTH;
@@ -652,6 +719,7 @@ function shakeRow() {
         const tile =
             board.children[start + i];
 
+
         if (!tile) {
             continue;
         }
@@ -661,7 +729,9 @@ function shakeRow() {
             "shake"
         );
 
+
         void tile.offsetWidth;
+
 
         tile.classList.add(
             "shake"
@@ -672,9 +742,9 @@ function shakeRow() {
 }
 
 
-// ==========================================
-// メッセージ
-// ==========================================
+/* =========================================================
+   メッセージ
+   ========================================================= */
 
 let messageTimer = null;
 
@@ -686,16 +756,21 @@ function showMessage(text) {
     }
 
 
-    clearTimeout(messageTimer);
+    clearTimeout(
+        messageTimer
+    );
 
-    message.textContent = text;
+
+    message.textContent =
+        text;
 
 
     messageTimer =
         setTimeout(
             () => {
 
-                message.textContent = "";
+                message.textContent =
+                    "";
 
             },
             2500
@@ -704,23 +779,28 @@ function showMessage(text) {
 }
 
 
-// ==========================================
-// ゲーム保存
-// ==========================================
+/* =========================================================
+   ゲーム保存
+   ========================================================= */
 
 function saveGame() {
 
     const data = {
 
-        date: getTodayKey(),
+        date:
+            getTodayKey(),
 
-        row: currentRow,
+        row:
+            currentRow,
 
-        currentGuess: currentGuess,
+        currentGuess:
+            currentGuess,
 
-        guesses: guesses,
+        guesses:
+            guesses,
 
-        gameOver: gameOver
+        gameOver:
+            gameOver
 
     };
 
@@ -732,11 +812,17 @@ function saveGame() {
 
 }
 
-// ==========================================
-// ゲーム復元
-// ==========================================
+
+/* =========================================================
+   ゲーム復元
+   ========================================================= */
 
 function loadGame() {
+
+    if (!board) {
+        return;
+    }
+
 
     const saved =
         localStorage.getItem(
@@ -755,7 +841,8 @@ function loadGame() {
             JSON.parse(saved);
 
 
-        // 日付が違う場合
+        /* 日付が違う */
+
         if (
             data.date !==
             getTodayKey()
@@ -765,9 +852,7 @@ function loadGame() {
         }
 
 
-        // ==================================
-        // 状態復元
-        // ==================================
+        /* 回答復元 */
 
         guesses =
             Array.isArray(data.guesses)
@@ -778,9 +863,15 @@ function loadGame() {
                 : [];
 
 
-        // currentRow は
-        // 保存データと回答数の
-        // 大きい方を基準にする
+        /*
+         * currentRowは
+         * 回答数を基準にする。
+         *
+         * これによって
+         * リロード後に同じ行へ
+         * 上書きするバグを防止。
+         */
+
         currentRow =
             Math.max(
                 Number(data.row) || 0,
@@ -788,7 +879,6 @@ function loadGame() {
             );
 
 
-        // 最大6行
         currentRow =
             Math.min(
                 currentRow,
@@ -797,24 +887,27 @@ function loadGame() {
 
 
         currentGuess =
-            data.currentGuess || "";
+            typeof data.currentGuess === "string"
+                ? data.currentGuess
+                : "";
 
 
         gameOver =
             Boolean(data.gameOver);
 
 
-        // ==================================
-        // 盤面復元
-        // ==================================
+        /* 盤面復元 */
 
         guesses.forEach(
             (guessData, row) => {
 
                 if (
                     !guessData ||
-                    !guessData.word ||
-                    !guessData.result
+                    typeof guessData.word !==
+                    "string" ||
+                    !Array.isArray(
+                        guessData.result
+                    )
                 ) {
 
                     return;
@@ -843,18 +936,30 @@ function loadGame() {
 
 
                     tile.textContent =
-                        guessData.word[i];
+                        guessData.word[i] || "";
 
 
-                    tile.classList.add(
-                        guessData.result[i]
-                    );
+                    const state =
+                        guessData.result[i];
 
 
-                    updateKeyboard(
-                        guessData.word[i],
-                        guessData.result[i]
-                    );
+                    if (
+                        state === "correct" ||
+                        state === "present" ||
+                        state === "absent"
+                    ) {
+
+                        tile.classList.add(
+                            state
+                        );
+
+
+                        updateKeyboard(
+                            guessData.word[i],
+                            state
+                        );
+
+                    }
 
                 }
 
@@ -862,7 +967,8 @@ function loadGame() {
         );
 
 
-        // 現在入力中の文字を復元
+        /* 現在入力中の文字 */
+
         if (!gameOver) {
 
             updateCurrentRow();
@@ -877,6 +983,7 @@ function loadGame() {
             error
         );
 
+
         localStorage.removeItem(
             GAME_STORAGE_KEY
         );
@@ -885,225 +992,14 @@ function loadGame() {
 
 }
 
-// ==========================================
-// ゲーム終了
-// ==========================================
 
-function finishGame(win) {
+/* =========================================================
+   統計
+   ========================================================= */
 
-    if (win) {
+function createDefaultStatistics() {
 
-        showMessage(
-            `🎉 ${currentRow + 1}回で正解！`
-        );
-
-
-        const start =
-            currentRow * WORD_LENGTH;
-
-
-        for (
-            let i = 0;
-            i < WORD_LENGTH;
-            i++
-        ) {
-
-            setTimeout(
-                () => {
-
-                    const tile =
-                        board.children[
-                            start + i
-                        ];
-
-
-                    if (tile) {
-
-                        tile.classList.add(
-                            "win"
-                        );
-
-                    }
-
-                },
-                i * 120
-            );
-
-        }
-
-    }
-    else {
-
-        showMessage(
-            `答えは ${ANSWER}`
-        );
-
-    }
-
-
-    updateStatistics(win);
-
-    saveGame();
-
-}
-
-
-// ==========================================
-// モーダル
-// ==========================================
-
-function openModal(id) {
-
-    const modal =
-        document.getElementById(id);
-
-    if (!modal) {
-        return;
-    }
-
-    modal.classList.add("show");
-
-}
-
-
-function closeModal(id) {
-
-    const modal =
-        document.getElementById(id);
-
-    if (!modal) {
-        return;
-    }
-
-    modal.classList.remove("show");
-
-}
-
-
-function setupModals() {
-
-    const helpButton =
-        document.getElementById(
-            "helpButton"
-        );
-
-    const statsButton =
-        document.getElementById(
-            "statsButton"
-        );
-
-    const settingsButton =
-        document.getElementById(
-            "settingsButton"
-        );
-
-
-    if (helpButton) {
-
-        helpButton.addEventListener(
-            "click",
-            () => {
-
-                openModal(
-                    "helpModal"
-                );
-
-            }
-        );
-
-    }
-
-
-    if (statsButton) {
-
-        statsButton.addEventListener(
-            "click",
-            () => {
-
-                renderStatistics();
-
-                openModal(
-                    "statsModal"
-                );
-
-            }
-        );
-
-    }
-
-
-    if (settingsButton) {
-
-        settingsButton.addEventListener(
-            "click",
-            () => {
-
-                openModal(
-                    "settingsModal"
-                );
-
-            }
-        );
-
-    }
-
-
-    document
-        .querySelectorAll("[data-close]")
-        .forEach(button => {
-
-            button.addEventListener(
-                "click",
-                () => {
-
-                    closeModal(
-                        button.dataset.close
-                    );
-
-                }
-            );
-
-        });
-
-
-    // モーダル外クリック
-
-    document
-        .querySelectorAll(".modal")
-        .forEach(modal => {
-
-            modal.addEventListener(
-                "click",
-                event => {
-
-                    if (
-                        event.target === modal
-                    ) {
-
-                        modal.classList.remove(
-                            "show"
-                        );
-
-                    }
-
-                }
-            );
-
-        });
-
-}
-
-// ==========================================
-// 統計データ取得
-// ==========================================
-
-const STATS_STORAGE_KEY =
-    "wordle-statistics-v5";
-
-
-function getStatistics() {
-
-    const defaultStats = {
+    return {
 
         played: 0,
 
@@ -1116,15 +1012,32 @@ function getStatistics() {
         distribution: {
 
             1: 0,
+
             2: 0,
+
             3: 0,
+
             4: 0,
+
             5: 0,
+
             6: 0
 
         }
 
     };
+
+}
+
+
+/* =========================================================
+   統計取得
+   ========================================================= */
+
+function getStatistics() {
+
+    const defaultStats =
+        createDefaultStatistics();
 
 
     const saved =
@@ -1145,8 +1058,6 @@ function getStatistics() {
         const stats =
             JSON.parse(saved);
 
-
-        // 不足しているデータを補完
 
         return {
 
@@ -1206,15 +1117,17 @@ function getStatistics() {
             error
         );
 
+
         return defaultStats;
 
     }
 
 }
 
-// ==========================================
-// 統計データ更新
-// ==========================================
+
+/* =========================================================
+   統計更新
+   ========================================================= */
 
 function updateStatistics(win) {
 
@@ -1231,6 +1144,7 @@ function updateStatistics(win) {
 
         stats.streak++;
 
+
         stats.maxStreak =
             Math.max(
                 stats.maxStreak,
@@ -1244,7 +1158,7 @@ function updateStatistics(win) {
 
         if (
             attempts >= 1 &&
-            attempts <= 6
+            attempts <= MAX_ATTEMPTS
         ) {
 
             stats.distribution[
@@ -1268,9 +1182,10 @@ function updateStatistics(win) {
 
 }
 
-// ==========================================
-// 統計表示
-// ==========================================
+
+/* =========================================================
+   統計表示
+   ========================================================= */
 
 function renderStatistics() {
 
@@ -1283,15 +1198,18 @@ function renderStatistics() {
             "played"
         );
 
+
     const winRate =
         document.getElementById(
             "winRate"
         );
 
+
     const streak =
         document.getElementById(
             "currentStreak"
         );
+
 
     const maxStreak =
         document.getElementById(
@@ -1311,7 +1229,7 @@ function renderStatistics() {
 
         winRate.textContent =
             stats.played === 0
-                ? 0
+                ? "0"
                 : Math.round(
                     stats.wins /
                     stats.played *
@@ -1337,15 +1255,7 @@ function renderStatistics() {
     }
 
 
-    const values =
-        Object.values(
-            stats.distribution
-        );
-
-
-    const maximum =
-        Math.max(...values, 1);
-
+    /* 分布 */
 
     document
         .querySelectorAll(
@@ -1387,14 +1297,31 @@ function renderStatistics() {
 
 
             const count =
-                stats.distribution[number] || 0;
+                stats.distribution[
+                    number
+                ] || 0;
+
+
+            const allValues =
+                Object.values(
+                    stats.distribution
+                );
+
+
+            const maximum =
+                Math.max(
+                    ...allValues,
+                    1
+                );
 
 
             const percentage =
                 count === 0
                     ? 0
                     : Math.max(
-                        count / maximum * 100,
+                        count /
+                        maximum *
+                        100,
                         8
                     );
 
@@ -1411,9 +1338,422 @@ function renderStatistics() {
 }
 
 
-// ==========================================
-// 結果共有
-// ==========================================
+/* =========================================================
+   ゲーム終了
+   ========================================================= */
+
+function finishGame(win) {
+
+    if (win) {
+
+        showMessage(
+            `🎉 ${currentRow + 1}回で正解！`
+        );
+
+
+        if (board) {
+
+            const start =
+                currentRow *
+                WORD_LENGTH;
+
+
+            for (
+                let i = 0;
+                i < WORD_LENGTH;
+                i++
+            ) {
+
+                setTimeout(
+                    () => {
+
+                        const tile =
+                            board.children[
+                                start + i
+                            ];
+
+
+                        if (tile) {
+
+                            tile.classList.add(
+                                "win"
+                            );
+
+                        }
+
+                    },
+                    i * 120
+                );
+
+            }
+
+        }
+
+    }
+    else {
+
+        showMessage(
+            `答えは ${ANSWER}`
+        );
+
+    }
+
+
+    updateStatistics(win);
+
+    saveGame();
+
+}
+
+
+/* =========================================================
+   モーダル
+   ========================================================= */
+
+function openModal(id) {
+
+    const modal =
+        document.getElementById(id);
+
+
+    if (!modal) {
+        return;
+    }
+
+
+    modal.classList.add(
+        "show"
+    );
+
+}
+
+
+function closeModal(id) {
+
+    const modal =
+        document.getElementById(id);
+
+
+    if (!modal) {
+        return;
+    }
+
+
+    modal.classList.remove(
+        "show"
+    );
+
+}
+
+
+/* =========================================================
+   モーダル設定
+   ========================================================= */
+
+function setupModals() {
+
+    /* data-close */
+
+    document
+        .querySelectorAll(
+            "[data-close]"
+        )
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    closeModal(
+                        button.dataset.close
+                    );
+
+                }
+            );
+
+        });
+
+
+    /* モーダル外クリック */
+
+    document
+        .querySelectorAll(
+            ".modal"
+        )
+        .forEach(modal => {
+
+            modal.addEventListener(
+                "click",
+                event => {
+
+                    if (
+                        event.target === modal
+                    ) {
+
+                        modal.classList.remove(
+                            "show"
+                        );
+
+                    }
+
+                }
+            );
+
+        });
+
+}
+
+
+/* =========================================================
+   設定
+   ========================================================= */
+
+function setupSettings() {
+
+    const settingsButton =
+        document.getElementById(
+            "settingsButton"
+        );
+
+
+    const settingsModal =
+        document.getElementById(
+            "settingsModal"
+        );
+
+
+    const darkMode =
+        document.getElementById(
+            "darkMode"
+        );
+
+
+    /* 設定ボタン */
+
+    if (
+        settingsButton &&
+        settingsModal
+    ) {
+
+        settingsButton.addEventListener(
+            "click",
+            () => {
+
+                openModal(
+                    "settingsModal"
+                );
+
+            }
+        );
+
+    }
+
+
+    /* ダークモード */
+
+    if (darkMode) {
+
+        const saved =
+            localStorage.getItem(
+                THEME_STORAGE_KEY
+            ) === "true";
+
+
+        darkMode.checked =
+            saved;
+
+
+        document.body.classList.toggle(
+            "dark",
+            saved
+        );
+
+
+        darkMode.addEventListener(
+            "change",
+            () => {
+
+                const enabled =
+                    darkMode.checked;
+
+
+                document.body.classList.toggle(
+                    "dark",
+                    enabled
+                );
+
+
+                localStorage.setItem(
+                    THEME_STORAGE_KEY,
+                    enabled
+                );
+
+            }
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   辞書
+   ========================================================= */
+
+function setupDictionary() {
+
+    const button =
+        document.getElementById(
+            "dictionaryButton"
+        );
+
+
+    const modal =
+        document.getElementById(
+            "dictionaryModal"
+        );
+
+
+    const list =
+        document.getElementById(
+            "dictionaryList"
+        );
+
+
+    const count =
+        document.getElementById(
+            "dictionaryCount"
+        );
+
+
+    const search =
+        document.getElementById(
+            "dictionarySearch"
+        );
+
+
+    if (
+        !button ||
+        !modal ||
+        !list
+    ) {
+
+        return;
+
+    }
+
+
+    function renderDictionary(
+        keyword = ""
+    ) {
+
+        if (
+            typeof VALID_WORDS ===
+            "undefined"
+        ) {
+
+            list.innerHTML =
+                "<p>辞書を読み込めません。</p>";
+
+            return;
+
+        }
+
+
+        const words =
+            [...VALID_WORDS]
+                .filter(word =>
+                    word.includes(
+                        keyword
+                            .trim()
+                            .toUpperCase()
+                    )
+                )
+                .sort();
+
+
+        if (count) {
+
+            count.textContent =
+                `${words.length}語`;
+
+        }
+
+
+        list.innerHTML = "";
+
+
+        words.forEach(word => {
+
+            const element =
+                document.createElement(
+                    "span"
+                );
+
+
+            element.className =
+                "dictionary-word";
+
+
+            element.textContent =
+                word;
+
+
+            list.appendChild(
+                element
+            );
+
+        });
+
+    }
+
+
+    /* 辞書ボタン */
+
+    button.addEventListener(
+        "click",
+        () => {
+
+            if (search) {
+
+                search.value = "";
+
+            }
+
+
+            renderDictionary();
+
+            openModal(
+                "dictionaryModal"
+            );
+
+        }
+    );
+
+
+    /* 辞書検索 */
+
+    if (search) {
+
+        search.addEventListener(
+            "input",
+            () => {
+
+                renderDictionary(
+                    search.value
+                );
+
+            }
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   結果共有
+   ========================================================= */
 
 function setupShare() {
 
@@ -1431,6 +1771,18 @@ function setupShare() {
     button.addEventListener(
         "click",
         async () => {
+
+            if (
+                guesses.length === 0
+            ) {
+
+                showMessage(
+                    "まだ結果がありません"
+                );
+
+                return;
+            }
+
 
             const attempt =
                 gameOver
@@ -1456,6 +1808,7 @@ function setupShare() {
 
                                 }
 
+
                                 if (
                                     state ===
                                     "present"
@@ -1464,6 +1817,7 @@ function setupShare() {
                                     return "🟨";
 
                                 }
+
 
                                 return "⬛";
 
@@ -1485,6 +1839,7 @@ ${grid}`;
                 await navigator.clipboard
                     .writeText(text);
 
+
                 showMessage(
                     "結果をコピーしました"
                 );
@@ -1505,73 +1860,22 @@ ${grid}`;
 }
 
 
-// ==========================================
-// ダークモード
-// ==========================================
+/* =========================================================
+   起動
+   ========================================================= */
 
-function setupSettings() {
+if (
+    document.readyState === "loading"
+) {
 
-    const darkMode =
-        document.getElementById(
-            "darkMode"
-        );
-
-
-    if (!darkMode) {
-        return;
-    }
-
-
-    const saved =
-        localStorage.getItem(
-            THEME_STORAGE_KEY
-        ) === "true";
-
-
-    darkMode.checked = saved;
-
-
-    document.body.classList.toggle(
-        "dark",
-        saved
-    );
-
-
-    darkMode.addEventListener(
-        "change",
-        () => {
-
-            const enabled =
-                darkMode.checked;
-
-
-            document.body.classList.toggle(
-                "dark",
-                enabled
-            );
-
-
-            localStorage.setItem(
-                THEME_STORAGE_KEY,
-                enabled
-            );
-
-        }
+    document.addEventListener(
+        "DOMContentLoaded",
+        init
     );
 
 }
+else {
 
+    init();
 
-// ==========================================
-// 共有ボタン
-// ==========================================
-
-setupShare();
-
-
-// ==========================================
-// ゲーム開始
-// ==========================================
-
-init();
-setupSettings();
+}
