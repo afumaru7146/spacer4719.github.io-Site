@@ -150,8 +150,19 @@ let guesses = [];
 // DOM
 // ==========================================
 
-const board =
-    document.getElementById("board");
+const board = document.getElementById("board");
+
+function createBoard() {
+    board.innerHTML = "";
+
+    for (let i = 0; i < 6 * 5; i++) {
+        const tile = document.createElement("div");
+        tile.className = "tile";
+        board.appendChild(tile);
+    }
+}
+
+createBoard();
 
 const message =
     document.getElementById("message");
