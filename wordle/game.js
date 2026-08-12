@@ -47,25 +47,95 @@ const WORDS = [
     "BEACH",
     "CROWN",
     "SNAKE",
-    "TIGER"
+    "TIGER",
+    "HYPED",
+    "HYPER",
+    "LOVEL",
+    "WIDER",
 
 ];
 
 
-// ======================================
-// DOM
-// ======================================
 
-const board =
-    document.getElementById("board");
+// ==========================================
+// Wordle Game Engine
+// ==========================================
 
-const message =
-    document.getElementById("message");
+const WORD_LENGTH = 5;
+const MAX_ATTEMPTS = 6;
+
+const STORAGE_KEY = "wordle-save-v4";
 
 
-// ======================================
-// ゲーム状態
-// ======================================
+// ==========================================
+// 今日の日付
+// ==========================================
+
+function getTodayKey() {
+
+    const date = new Date();
+
+    const year =
+        date.getFullYear();
+
+    const month =
+        String(date.getMonth() + 1)
+            .padStart(2, "0");
+
+    const day =
+        String(date.getDate())
+            .padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+
+}
+
+
+// ==========================================
+// 日付から問題番号を作る
+// ==========================================
+
+function getPuzzleNumber() {
+
+    const start =
+        new Date("2026-01-01T00:00:00");
+
+    const today =
+        new Date();
+
+    start.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+
+    return Math.floor(
+        (today - start) / 86400000
+    );
+
+}
+
+
+// ==========================================
+// 今日の答え
+// ==========================================
+
+function getDailyAnswer() {
+
+    const number =
+        getPuzzleNumber();
+
+    return ANSWER_WORDS[
+        number % ANSWER_WORDS.length
+    ];
+
+}
+
+
+const ANSWER =
+    getDailyAnswer();
+
+
+// ==========================================
+// 状態
+// ==========================================
 
 let currentRow = 0;
 
@@ -76,41 +146,20 @@ let gameOver = false;
 let guesses = [];
 
 
-// ======================================
-// 今日の問題
-// ======================================
+// ==========================================
+// DOM
+// ==========================================
 
-function getDailyWord() {
+const board =
+    document.getElementById("board");
 
-    const start =
-        new Date("2026-01-01");
-
-    const today =
-        new Date();
-
-    start.setHours(0, 0, 0, 0);
-    today.setHours(0, 0, 0, 0);
-
-    const difference =
-        Math.floor(
-            (today - start) /
-            86400000
-        );
-
-    return WORDS[
-        difference % WORDS.length
-    ];
-
-}
+const message =
+    document.getElementById("message");
 
 
-const ANSWER =
-    getDailyWord();
-
-
-// ======================================
+// ==========================================
 // ボード生成
-// ======================================
+// ==========================================
 
 function createBoard() {
 
@@ -136,20 +185,20 @@ function createBoard() {
 createBoard();
 
 
-// ======================================
+// ==========================================
 // キーボード
-// ======================================
+// ==========================================
 
 document
     .querySelectorAll(".key")
-    .forEach(button => {
+    .forEach(key => {
 
-        button.addEventListener(
+        key.addEventListener(
             "click",
             () => {
 
                 handleKey(
-                    button.dataset.key
+                    key.dataset.key
                 );
 
             }
@@ -157,10 +206,6 @@ document
 
     });
 
-
-// ======================================
-// PCキーボード
-// ======================================
 
 document.addEventListener(
     "keydown",
@@ -187,9 +232,7 @@ document.addEventListener(
         const key =
             event.key.toUpperCase();
 
-        if (
-            /^[A-Z]$/.test(key)
-        ) {
+        if (/^[A-Z]$/.test(key)) {
 
             handleKey(key);
 
@@ -199,9 +242,9 @@ document.addEventListener(
 );
 
 
-// ======================================
+// ==========================================
 // キー処理
-// ======================================
+// ==========================================
 
 function handleKey(key) {
 
@@ -210,11 +253,7 @@ function handleKey(key) {
     }
 
 
-    // 文字
-
-    if (
-        /^[A-Z]$/.test(key)
-    ) {
+    if (/^[A-Z]$/.test(key)) {
 
         if (
             currentGuess.length <
@@ -228,11 +267,8 @@ function handleKey(key) {
         }
 
         return;
-
     }
 
-
-    // Backspace
 
     if (key === "BACKSPACE") {
 
@@ -246,8 +282,6 @@ function handleKey(key) {
     }
 
 
-    // Enter
-
     if (key === "ENTER") {
 
         submitGuess();
@@ -257,9 +291,9 @@ function handleKey(key) {
 }
 
 
-// ======================================
-// 現在の行を更新
-// ======================================
+// ==========================================
+// 入力表示
+// ==========================================
 
 function updateCurrentRow() {
 
@@ -279,12 +313,8 @@ function updateCurrentRow() {
         tile.textContent =
             currentGuess[i] || "";
 
-        tile.classList.remove("pop");
-
     }
 
-
-    // Pop animation
 
     if (currentGuess.length > 0) {
 
@@ -295,6 +325,10 @@ function updateCurrentRow() {
                 1
             ];
 
+        tile.classList.remove("pop");
+
+        void tile.offsetWidth;
+
         tile.classList.add("pop");
 
     }
@@ -302,9 +336,9 @@ function updateCurrentRow() {
 }
 
 
-// ======================================
+// ==========================================
 // 回答
-// ======================================
+// ==========================================
 
 function submitGuess() {
 
@@ -317,28 +351,22 @@ function submitGuess() {
             "5文字入力してください"
         );
 
-        shakeRow();
+        shake();
 
         return;
 
     }
 
 
-    const guess =
-        currentGuess;
-
-
-    // 単語チェック
-
     if (
-        !WORDS.includes(guess)
+        !VALID_WORDS.has(currentGuess)
     ) {
 
         showMessage(
-            "登録されていない単語です"
+            "その単語は辞書にありません"
         );
 
-        shakeRow();
+        shake();
 
         return;
 
@@ -346,36 +374,31 @@ function submitGuess() {
 
 
     const result =
-        checkGuess(guess);
+        checkGuess(currentGuess);
 
 
-    revealTiles(
-        guess,
+    guesses.push({
+        word: currentGuess,
+        result: result
+    });
+
+
+    reveal(
+        currentGuess,
         result
     );
 
 
-    guesses.push(result);
+    saveState();
 
 
-    if (guess === ANSWER) {
+    if (
+        currentGuess === ANSWER
+    ) {
 
         gameOver = true;
 
-        saveGame(true);
-
-        setTimeout(
-            () => {
-
-                showMessage(
-                    "🎉 正解！"
-                );
-
-                showStats();
-
-            },
-            1500
-        );
+        finishGame(true);
 
         return;
 
@@ -394,29 +417,16 @@ function submitGuess() {
 
         gameOver = true;
 
-        saveGame(false);
-
-        setTimeout(
-            () => {
-
-                showMessage(
-                    `答えは ${ANSWER}`
-                );
-
-                showStats();
-
-            },
-            800
-        );
+        finishGame(false);
 
     }
 
 }
 
 
-// ======================================
+// ==========================================
 // 判定
-// ======================================
+// ==========================================
 
 function checkGuess(guess) {
 
@@ -428,9 +438,7 @@ function checkGuess(guess) {
         ANSWER.split("");
 
 
-    // --------------------------
-    // 正解位置
-    // --------------------------
+    // 正解
 
     for (
         let i = 0;
@@ -451,9 +459,7 @@ function checkGuess(guess) {
     }
 
 
-    // --------------------------
-    // 含まれる文字
-    // --------------------------
+    // 含まれている
 
     for (
         let i = 0;
@@ -464,9 +470,7 @@ function checkGuess(guess) {
         if (
             result[i] === "correct"
         ) {
-
             continue;
-
         }
 
 
@@ -492,11 +496,11 @@ function checkGuess(guess) {
 }
 
 
-// ======================================
-// タイル表示
-// ======================================
+// ==========================================
+// 結果表示
+// ==========================================
 
-function revealTiles(
+function reveal(
     guess,
     result
 ) {
@@ -511,16 +515,19 @@ function revealTiles(
         i++
     ) {
 
-        const tile =
-            board.children[start + i];
-
-
         setTimeout(
             () => {
+
+                const tile =
+                    board.children[
+                        start + i
+                    ];
+
 
                 tile.classList.add(
                     "flip"
                 );
+
 
                 setTimeout(
                     () => {
@@ -528,6 +535,7 @@ function revealTiles(
                         tile.classList.add(
                             result[i]
                         );
+
 
                         updateKeyboard(
                             guess[i],
@@ -547,11 +555,11 @@ function revealTiles(
 }
 
 
-// ======================================
-// キーボード色
-// ======================================
+// ==========================================
+// キーボード状態
+// ==========================================
 
-const keyboardPriority = {
+const priority = {
 
     absent: 1,
     present: 2,
@@ -576,15 +584,14 @@ function updateKeyboard(
     }
 
 
-    const currentState =
+    const oldState =
         key.dataset.state;
 
 
     if (
-        currentState &&
-        keyboardPriority[currentState]
-        >=
-        keyboardPriority[state]
+        oldState &&
+        priority[oldState] >=
+        priority[state]
     ) {
 
         return;
@@ -605,11 +612,11 @@ function updateKeyboard(
 }
 
 
-// ======================================
+// ==========================================
 // Shake
-// ======================================
+// ==========================================
 
-function shakeRow() {
+function shake() {
 
     const start =
         currentRow * WORD_LENGTH;
@@ -624,14 +631,146 @@ function shakeRow() {
         const tile =
             board.children[start + i];
 
-        tile.classList.remove(
-            "shake"
-        );
+        tile.classList.remove("shake");
 
         void tile.offsetWidth;
 
-        tile.classList.add(
-            "shake"
+        tile.classList.add("shake");
+
+    }
+
+}
+
+
+// ==========================================
+// ゲーム保存
+// ==========================================
+
+function saveState() {
+
+    const data = {
+
+        date: getTodayKey(),
+
+        row: currentRow,
+
+        currentGuess: currentGuess,
+
+        guesses: guesses,
+
+        gameOver: gameOver
+
+    };
+
+
+    localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(data)
+    );
+
+}
+
+
+// ==========================================
+// ゲーム復元
+// ==========================================
+
+function loadState() {
+
+    const saved =
+        localStorage.getItem(
+            STORAGE_KEY
+        );
+
+
+    if (!saved) {
+        return;
+    }
+
+
+    try {
+
+        const data =
+            JSON.parse(saved);
+
+
+        // 日付が違えば
+        // 新しいゲーム
+
+        if (
+            data.date !==
+            getTodayKey()
+        ) {
+
+            return;
+
+        }
+
+
+        currentRow =
+            data.row || 0;
+
+        currentGuess =
+            data.currentGuess || "";
+
+        guesses =
+            data.guesses || [];
+
+        gameOver =
+            data.gameOver || false;
+
+
+        // 過去の回答を復元
+
+        guesses.forEach(
+            (guessData, row) => {
+
+                const start =
+                    row *
+                    WORD_LENGTH;
+
+
+                for (
+                    let i = 0;
+                    i < WORD_LENGTH;
+                    i++
+                ) {
+
+                    const tile =
+                        board.children[
+                            start + i
+                        ];
+
+
+                    tile.textContent =
+                        guessData.word[i];
+
+
+                    tile.classList.add(
+                        guessData.result[i]
+                    );
+
+
+                    updateKeyboard(
+                        guessData.word[i],
+                        guessData.result[i]
+                    );
+
+                }
+
+            }
+        );
+
+
+        updateCurrentRow();
+
+
+    }
+
+    catch {
+
+        localStorage.removeItem(
+            STORAGE_KEY
         );
 
     }
@@ -639,62 +778,70 @@ function shakeRow() {
 }
 
 
-// ======================================
-// メッセージ
-// ======================================
-
-let messageTimer;
+loadState();
 
 
-function showMessage(text) {
+// ==========================================
+// 終了
+// ==========================================
 
-    clearTimeout(messageTimer);
+function finishGame(win) {
 
-    message.textContent = text;
+    setTimeout(
+        () => {
+
+            if (win) {
+
+                showMessage(
+                    `🎉 ${currentRow + 1}回で正解！`
+                );
+
+            }
+
+            else {
+
+                showMessage(
+                    `答えは ${ANSWER}`
+                );
+
+            }
 
 
-    messageTimer =
-        setTimeout(
-            () => {
+            updateStatistics(
+                win
+            );
 
-                message.textContent = "";
 
-            },
-            2500
-        );
+            saveState();
+
+        },
+        1800
+    );
 
 }
 
 
-// ======================================
+// ==========================================
 // 統計
-// ======================================
+// ==========================================
 
-function getStats() {
+function updateStatistics(win) {
 
-    return JSON.parse(
-        localStorage.getItem(
-            "wordle-stats"
-        )
-    ) || {
+    const key =
+        "wordle-statistics-v4";
 
-        played: 0,
-
-        wins: 0,
-
-        streak: 0,
-
-        maxStreak: 0
-
-    };
-
-}
-
-
-function saveGame(win) {
 
     const stats =
-        getStats();
+        JSON.parse(
+            localStorage.getItem(key)
+        ) || {
+
+            played: 0,
+            wins: 0,
+            streak: 0,
+            maxStreak: 0
+
+        };
 
 
     stats.played++;
@@ -722,228 +869,36 @@ function saveGame(win) {
 
 
     localStorage.setItem(
-        "wordle-stats",
+        key,
         JSON.stringify(stats)
     );
 
 }
 
 
-// ======================================
-// 統計画面
-// ======================================
+// ==========================================
+// メッセージ
+// ==========================================
 
-function showStats() {
-
-    const stats =
-        getStats();
+let messageTimer;
 
 
-    document.getElementById(
-        "played"
-    ).textContent =
-        stats.played;
+function showMessage(text) {
+
+    clearTimeout(messageTimer);
+
+    message.textContent = text;
 
 
-    document.getElementById(
-        "winRate"
-    ).textContent =
-        stats.played
-            ? Math.round(
-                stats.wins /
-                stats.played *
-                100
-            )
-            : 0;
-
-
-    document.getElementById(
-        "streak"
-    ).textContent =
-        stats.streak;
-
-
-    document.getElementById(
-        "maxStreak"
-    ).textContent =
-        stats.maxStreak;
-
-
-    openModal(
-        "statsModal"
-    );
-
-}
-
-
-// ======================================
-// 結果共有
-// ======================================
-
-document
-    .getElementById("shareButton")
-    .addEventListener(
-        "click",
-        async () => {
-
-            const result =
-                guesses.map(row => {
-
-                    return row.map(
-                        state => {
-
-                            if (
-                                state ===
-                                "correct"
-                            ) {
-                                return "🟩";
-                            }
-
-                            if (
-                                state ===
-                                "present"
-                            ) {
-                                return "🟨";
-                            }
-
-                            return "⬛";
-
-                        }
-                    ).join("");
-
-                }).join("\n");
-
-
-            const text =
-                `Wordle Clone\n\n${result}`;
-
-
-            try {
-
-                await navigator.clipboard.writeText(
-                    text
-                );
-
-                showMessage(
-                    "結果をコピーしました"
-                );
-
-            }
-
-            catch {
-
-                alert(text);
-
-            }
-
-        }
-    );
-
-
-// ======================================
-// Modal
-// ======================================
-
-function openModal(id) {
-
-    document
-        .getElementById(id)
-        .classList.add("show");
-
-}
-
-
-function closeModal(id) {
-
-    document
-        .getElementById(id)
-        .classList.remove("show");
-
-}
-
-
-document
-    .getElementById("helpButton")
-    .addEventListener(
-        "click",
-        () => openModal("helpModal")
-    );
-
-
-document
-    .getElementById("statsButton")
-    .addEventListener(
-        "click",
-        showStats
-    );
-
-
-document
-    .getElementById("settingsButton")
-    .addEventListener(
-        "click",
-        () => openModal("settingsModal")
-    );
-
-
-document
-    .querySelectorAll("[data-close]")
-    .forEach(button => {
-
-        button.addEventListener(
-            "click",
+    messageTimer =
+        setTimeout(
             () => {
 
-                closeModal(
-                    button.dataset.close
-                );
+                message.textContent = "";
 
-            }
+            },
+            2500
         );
-
-    });
-
-
-// ======================================
-// ダークモード
-// ======================================
-
-const darkMode =
-    document.getElementById(
-        "darkMode"
-    );
-
-
-darkMode.checked =
-    localStorage.getItem(
-        "wordle-dark"
-    ) === "true";
-
-
-if (darkMode.checked) {
-
-    document.body.classList.add(
-        "dark"
-    );
 
 }
-
-
-darkMode.addEventListener(
-    "change",
-    () => {
-
-        document.body.classList.toggle(
-            "dark",
-            darkMode.checked
-        );
-
-
-        localStorage.setItem(
-            "wordle-dark",
-            darkMode.checked
-        );
-
-    }
-);
 

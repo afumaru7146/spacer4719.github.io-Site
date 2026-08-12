@@ -118,11 +118,14 @@
 
 <!-- Statistics -->
 
+```html
 <div class="modal" id="statsModal">
 
-    <div class="modal-content">
+    <div class="modal-content stats-modal">
 
-        <button class="close" data-close="statsModal">×</button>
+        <button class="close" data-close="statsModal">
+            ×
+        </button>
 
         <h2>統計</h2>
 
@@ -139,7 +142,7 @@
             </div>
 
             <div>
-                <strong id="streak">0</strong>
+                <strong id="currentStreak">0</strong>
                 <span>連勝</span>
             </div>
 
@@ -150,7 +153,66 @@
 
         </div>
 
-        <button id="shareButton" class="share-button">
+
+        <h3>推測回数</h3>
+
+        <div id="guessDistribution">
+
+            <div class="distribution-row">
+                <span>1</span>
+                <div class="bar">
+                    <span data-count="1"></span>
+                </div>
+                <strong>0</strong>
+            </div>
+
+            <div class="distribution-row">
+                <span>2</span>
+                <div class="bar">
+                    <span data-count="2"></span>
+                </div>
+                <strong>0</strong>
+            </div>
+
+            <div class="distribution-row">
+                <span>3</span>
+                <div class="bar">
+                    <span data-count="3"></span>
+                </div>
+                <strong>0</strong>
+            </div>
+
+            <div class="distribution-row">
+                <span>4</span>
+                <div class="bar">
+                    <span data-count="4"></span>
+                </div>
+                <strong>0</strong>
+            </div>
+
+            <div class="distribution-row">
+                <span>5</span>
+                <div class="bar">
+                    <span data-count="5"></span>
+                </div>
+                <strong>0</strong>
+            </div>
+
+            <div class="distribution-row">
+                <span>6</span>
+                <div class="bar">
+                    <span data-count="6"></span>
+                </div>
+                <strong>0</strong>
+            </div>
+
+        </div>
+
+
+        <button
+            id="shareButton"
+            class="share-button"
+        >
             結果を共有
         </button>
 
@@ -158,35 +220,8 @@
 
 </div>
 
-
-<!-- Settings -->
-
-<div class="modal" id="settingsModal">
-
-    <div class="modal-content">
-
-        <button class="close" data-close="settingsModal">×</button>
-
-        <h2>設定</h2>
-
-        <label class="setting">
-
-            <span>ダークモード</span>
-
-            <input
-                type="checkbox"
-                id="darkMode"
-            >
-
-        </label>
-
-    </div>
-
-</div>
-
-
+<script src="words.js"></script>
 <script src="game.js"></script>
 
 </body>
 </html>
-
