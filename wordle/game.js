@@ -732,7 +732,6 @@ function saveGame() {
 
 }
 
-
 // ==========================================
 // ゲーム復元
 // ==========================================
@@ -756,9 +755,7 @@ function loadGame() {
             JSON.parse(saved);
 
 
-        // 日付が違う場合は
-        // 新しいゲーム
-
+        // 日付が違う場合
         if (
             data.date !==
             getTodayKey()
@@ -768,25 +765,61 @@ function loadGame() {
         }
 
 
+        // ==================================
+        // 状態復元
+        // ==================================
+
+        guesses =
+            Array.isArray(data.guesses)
+                ? data.guesses.slice(
+                    0,
+                    MAX_ATTEMPTS
+                )
+                : [];
+
+
+        // currentRow は
+        // 保存データと回答数の
+        // 大きい方を基準にする
         currentRow =
-            Number(data.row) || 0;
+            Math.max(
+                Number(data.row) || 0,
+                guesses.length
+            );
+
+
+        // 最大6行
+        currentRow =
+            Math.min(
+                currentRow,
+                MAX_ATTEMPTS
+            );
+
 
         currentGuess =
             data.currentGuess || "";
 
-        guesses =
-            Array.isArray(data.guesses)
-                ? data.guesses
-                : [];
 
         gameOver =
             Boolean(data.gameOver);
 
 
-        // 過去の回答を復元
+        // ==================================
+        // 盤面復元
+        // ==================================
 
         guesses.forEach(
             (guessData, row) => {
+
+                if (
+                    !guessData ||
+                    !guessData.word ||
+                    !guessData.result
+                ) {
+
+                    return;
+                }
+
 
                 const start =
                     row * WORD_LENGTH;
@@ -829,8 +862,12 @@ function loadGame() {
         );
 
 
-        updateCurrentRow();
+        // 現在入力中の文字を復元
+        if (!gameOver) {
 
+            updateCurrentRow();
+
+        }
 
     }
     catch (error) {
@@ -847,100 +884,6 @@ function loadGame() {
     }
 
 }
-
-
-// ==========================================
-// 統計取得
-// ==========================================
-
-function getStatistics() {
-
-    return JSON.parse(
-        localStorage.getItem(
-            STATS_STORAGE_KEY
-        )
-    ) || {
-
-        played: 0,
-
-        wins: 0,
-
-        streak: 0,
-
-        maxStreak: 0,
-
-        distribution: {
-
-            1: 0,
-            2: 0,
-            3: 0,
-            4: 0,
-            5: 0,
-            6: 0
-
-        }
-
-    };
-
-}
-
-
-// ==========================================
-// 統計更新
-// ==========================================
-
-function updateStatistics(win) {
-
-    const stats =
-        getStatistics();
-
-
-    stats.played++;
-
-
-    if (win) {
-
-        stats.wins++;
-
-        stats.streak++;
-
-        stats.maxStreak =
-            Math.max(
-                stats.maxStreak,
-                stats.streak
-            );
-
-
-        const attempts =
-            currentRow + 1;
-
-
-        if (
-            attempts >= 1 &&
-            attempts <= 6
-        ) {
-
-            stats.distribution[
-                attempts
-            ]++;
-
-        }
-
-    }
-    else {
-
-        stats.streak = 0;
-
-    }
-
-
-    localStorage.setItem(
-        STATS_STORAGE_KEY,
-        JSON.stringify(stats)
-    );
-
-}
-
 
 // ==========================================
 // ゲーム終了
