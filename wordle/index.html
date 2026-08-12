@@ -1,488 +1,124 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wordle | spacer4719's site</title>
-    <meta name="description" content="Wordle game on spacer4719's site.">
-    <meta property="og:url" content="https://spacer4719.f5.si/wordle">
-    <meta property="og:type" content="website">
-    <link rel="stylesheet" href="style.css">
-
-    <style>
-        :root {
-            --site-bg-1: #0a3d62;
-            --site-bg-2: #003366;
-            --cyan: #00f7ff;
-            --cyan-soft: #00f7ff55;
-            --site-text: #e0f7fa;
-            --panel: rgba(10, 61, 98, 0.85);
-        }
-
-        * { box-sizing: border-box; }
-
-        html, body { min-height: 100%; }
-
-        body {
-            margin: 0;
-            padding: 0 0 76px;
-            background: linear-gradient(135deg, var(--site-bg-1) 0%, var(--site-bg-2) 100%);
-            font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
-            color: var(--site-text);
-        }
-
-        a { color: var(--cyan); }
-
-        .site-nav {
-            width: 100%;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 500;
-            background: linear-gradient(90deg, #003366 0%, #005577 100%);
-            box-shadow: 0 4px 24px #00f7ff55, 0 1px 0 #00f7ff inset;
-        }
-
-        .site-nav-inner {
-            width: min(1200px, 94vw);
-            min-height: 64px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .site-nav ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 1.4rem;
-            flex-wrap: wrap;
-        }
-
-        .site-nav a {
-            color: var(--cyan);
-            font-size: 1rem;
-            font-weight: bold;
-            text-shadow: 0 0 8px #000, 0 0 2px #000;
-            padding: .3em .75em;
-            border-radius: 8px;
-            text-decoration: none;
-            letter-spacing: .05em;
-        }
-
-        .site-nav a:hover {
-            background: #00f7ff18;
-            box-shadow: 0 0 12px #00f7ff44;
-        }
-
-        .site-brand {
-            display: inline-flex;
-            align-items: center;
-            height: 100%;
-        }
-
-        .site-brand img {
-            width: 48px;
-            height: 48px;
-            margin-right: .5rem;
-        }
-
-        .wordle-shell {
-            width: min(560px, 96vw);
-            margin: 96px auto 20px;
-            padding: 18px 16px 24px;
-            background: rgba(0, 29, 54, .36);
-            border: 1px solid #00f7ff33;
-            border-radius: 18px;
-            box-shadow: 0 8px 32px #00f7ff33, 0 1.5px 0 #00f7ff55 inset;
-            backdrop-filter: blur(5px);
-        }
-
-        .wordle-header {
-            min-height: 64px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-bottom: 1px solid #00f7ff33;
-            position: relative;
-        }
-
-        .wordle-header h1 {
-            margin: 0;
-            font-size: clamp(2rem, 7vw, 2.8rem);
-            letter-spacing: .12em;
-            color: var(--cyan);
-            text-shadow: 0 0 12px var(--cyan), 0 0 24px #0ff;
-        }
-
-        .wordle-header-actions {
-            position: absolute;
-            right: 0;
-            display: flex;
-            gap: 4px;
-        }
-
-        .wordle-icon {
-            width: 40px;
-            height: 40px;
-            border: 0;
-            border-radius: 8px;
-            background: transparent;
-            color: var(--cyan);
-            font-size: 20px;
-            cursor: pointer;
-        }
-
-        .wordle-icon:hover { background: #00f7ff16; }
-
-        #message {
-            height: 46px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            color: #fff;
-            text-shadow: 0 0 7px #000;
-        }
-
-        #board {
-            width: max-content;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(5, 62px);
-            grid-template-rows: repeat(6, 62px);
-            gap: 6px;
-        }
-
-        .tile {
-            width: 62px;
-            height: 62px;
-            border: 2px solid #00f7ff55;
-            background: rgba(0, 25, 45, .65);
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 31px;
-            font-weight: 800;
-            text-transform: uppercase;
-            user-select: none;
-            box-shadow: 0 0 8px #00f7ff13 inset;
-        }
-
-        .tile.correct { background: #1f7a59; border-color: #47ffb2; }
-        .tile.present { background: #8a7221; border-color: #ffe36a; }
-        .tile.absent { background: #4d5860; border-color: #8a9aa5; }
-
-        #keyboard { width: 100%; margin: 24px auto 0; }
-        .keyboard-row { display: flex; justify-content: center; gap: 5px; margin-bottom: 6px; }
-        .key {
-            min-width: 38px;
-            height: 52px;
-            padding: 0 7px;
-            border: 1px solid #00f7ff55;
-            border-radius: 6px;
-            background: rgba(0, 35, 60, .88);
-            color: #fff;
-            font-weight: 800;
-            cursor: pointer;
-            box-shadow: 0 0 8px #00f7ff16 inset;
-            touch-action: manipulation;
-        }
-        .key.wide { min-width: 68px; }
-        .key.correct { background: #1f7a59; }
-        .key.present { background: #8a7221; }
-        .key.absent { background: #4d5860; }
-        .key:hover { filter: brightness(1.15); }
-
-        .wordle-modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-            padding: 16px;
-            background: rgba(0, 0, 0, .65);
-        }
-        .wordle-modal.show { display: flex; }
-        .wordle-modal-content {
-            width: min(92vw, 520px);
-            max-height: 85vh;
-            overflow: auto;
-            position: relative;
-            padding: 26px 24px;
-            border-radius: 14px;
-            border: 1px solid #00f7ff66;
-            background: linear-gradient(135deg, #0b2c4a 0%, #06213a 100%);
-            color: #fff;
-            box-shadow: 0 12px 50px #000a, 0 0 20px #00f7ff22;
-        }
-        .close {
-            position: absolute;
-            top: 8px;
-            right: 12px;
-            border: 0;
-            background: transparent;
-            color: #fff;
-            font-size: 28px;
-            cursor: pointer;
-        }
-        .example { display: flex; gap: 4px; margin: 16px 0; }
-        .example-tile { width: 42px; height: 42px; display: grid; place-items: center; border: 2px solid #00f7ff55; font-weight: 800; }
-        .example-tile.correct { background: #1f7a59; border-color: #47ffb2; }
-
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            text-align: center;
-            margin: 20px 0;
-        }
-        .stats strong { display: block; font-size: 28px; }
-        .stats span { font-size: 12px; opacity: .85; }
-
-        .distribution-row {
-            display: grid;
-            grid-template-columns: 20px 1fr 30px;
-            gap: 8px;
-            align-items: center;
-            margin-bottom: 6px;
-        }
-        .bar { height: 22px; border-radius: 3px; background: #23475f; overflow: hidden; }
-        .bar span { display: block; height: 100%; width: 0; background: #1f7a59; transition: width .4s ease; }
-
-        .share-button {
-            width: 100%;
-            padding: 12px;
-            border: 0;
-            border-radius: 8px;
-            background: #00a8b5;
-            color: #fff;
-            font-weight: 800;
-            cursor: pointer;
-        }
-
-        .setting {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 14px 0;
-            border-bottom: 1px solid #00f7ff22;
-        }
-
-        #dictionarySearch {
-            width: 100%;
-            padding: 11px 12px;
-            border-radius: 7px;
-            border: 1px solid #00f7ff55;
-            background: #08253c;
-            color: #fff;
-            outline: none;
-            margin: 10px 0 12px;
-        }
-        .dictionary-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 6px;
-            max-height: 52vh;
-            overflow-y: auto;
-        }
-        .dictionary-word {
-            min-height: 36px;
-            display: grid;
-            place-items: center;
-            border: 1px solid #00f7ff33;
-            border-radius: 4px;
-            background: #0a3554;
-            font-weight: 700;
-        }
-
-        .footer-bar {
-            width: 100%;
-            position: fixed;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: 400;
-            height: 56px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(90deg, #003366 0%, #005577 100%);
-            box-shadow: 0 -4px 24px #00f7ff55, 0 -1px 0 #00f7ff inset;
-        }
-        .footer-bar span { color: var(--cyan); text-shadow: 0 0 8px var(--cyan), 0 0 2px #fff; }
-
-        body.dark .wordle-shell {
-            background: rgba(3, 15, 27, .76);
-        }
-
-        @media (max-width: 720px) {
-            .site-nav-inner { min-height: 60px; }
-            .site-nav ul { gap: .35rem; }
-            .site-nav a { font-size: .8rem; padding: .25em .45em; }
-            .wordle-shell { margin-top: 86px; }
-        }
-
-        @media (max-width: 500px) {
-            #board {
-                grid-template-columns: repeat(5, 55px);
-                grid-template-rows: repeat(6, 55px);
-                gap: 5px;
-            }
-            .tile { width: 55px; height: 55px; font-size: 27px; }
-            .key { min-width: 29px; height: 48px; font-size: 11px; padding: 0 4px; }
-            .key.wide { min-width: 55px; }
-            .wordle-shell { width: 98vw; padding-inline: 8px; }
-            .stats { grid-template-columns: repeat(2, 1fr); }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta property="og:url" content="https://spacer4719.f5.si/wordle">
+<title>Wordle | spacer4719's site</title>
+<style>
+*{box-sizing:border-box}
+:root{--bg1:#0a3d62;--bg2:#003366;--panel:#061f34;--text:#e0f7fa;--neon:#00f7ff;--line:#00f7ff55;--key:#0b4164;--correct:#5daa67;--present:#b7a33a;--absent:#5b666b}
+html,body{margin:0;padding:0;min-height:100%;background:linear-gradient(135deg,var(--bg1),var(--bg2));color:var(--text);font-family:Inter,"Segoe UI",Arial,sans-serif}
+body{padding-bottom:58px}
+.topnav{height:64px;position:fixed;top:0;left:0;right:0;z-index:100;background:linear-gradient(90deg,#003366,#005577);box-shadow:0 4px 24px #00f7ff55,0 1px 0 #00f7ff inset}
+.topnav-inner{width:min(1200px,92vw);height:64px;margin:auto;display:flex;align-items:center;justify-content:center}
+.topnav ul{list-style:none;margin:0;padding:0;display:flex;align-items:center;gap:1.6rem}
+.topnav a{color:var(--neon);text-decoration:none;font-weight:700;letter-spacing:.04em;text-shadow:0 0 8px #000;padding:.3em .8em;border-radius:8px}
+.topnav a:hover{background:#00f7ff12}
+.topnav img{width:40px;height:40px;border-radius:8px;margin-right:.5rem}
+.wordle-shell{width:min(560px,94vw);margin:84px auto 24px;background:rgba(3,25,42,.93);border:1px solid var(--line);border-radius:18px;box-shadow:0 8px 40px #00f7ff22,0 0 0 1px #00f7ff18 inset;padding:14px 18px 22px}
+.wordle-header{height:76px;display:flex;align-items:center;justify-content:center;position:relative}
+.wordle-header h1{margin:0;color:var(--neon);font-size:38px;letter-spacing:5px;text-shadow:0 0 10px var(--neon),0 0 24px #00f7ff88}
+.header-actions{position:absolute;right:4px;display:flex;gap:4px}.icon-btn{width:38px;height:38px;background:transparent;border:1px solid transparent;color:var(--neon);border-radius:8px;font-size:19px;cursor:pointer}.icon-btn:hover{background:#00f7ff12;border-color:var(--line)}
+#dictionaryButton{position:absolute;left:8px;top:18px;background:transparent;border:1px solid transparent;color:var(--neon);border-radius:8px;font-size:18px;cursor:pointer}.wordle-main{display:flex;flex-direction:column;align-items:center}#message{height:38px;display:flex;align-items:center;justify-content:center;font-weight:700;text-shadow:0 0 8px #00f7ff55}
+#board{display:grid;grid-template-columns:repeat(5,62px);grid-template-rows:repeat(6,62px);gap:5px}.tile{width:62px;height:62px;display:flex;align-items:center;justify-content:center;border:2px solid #00f7ff55;background:#032034;color:#fff;font-size:30px;font-weight:800;text-transform:uppercase;user-select:none}.tile.correct{background:var(--correct);border-color:var(--correct)}.tile.present{background:var(--present);border-color:var(--present)}.tile.absent{background:var(--absent);border-color:var(--absent)}
+@keyframes pop{50%{transform:scale(1.08)}}.tile.pop{animation:pop .1s ease-in-out}@keyframes flip{0%{transform:perspective(400px) rotateX(0)}50%{transform:perspective(400px) rotateX(90deg)}100%{transform:perspective(400px) rotateX(0)}}.tile.flip{animation:flip .6s ease}@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}.tile.shake{animation:shake .35s ease}@keyframes win{0%{transform:translateY(0)}30%{transform:translateY(-10px)}60%{transform:translateY(0)}80%{transform:translateY(-4px)}100%{transform:translateY(0)}}.tile.win{animation:win .7s ease}
+#keyboard{width:100%;margin-top:26px}.keyboard-row{display:flex;justify-content:center;gap:5px;margin-bottom:7px}.key{height:56px;min-width:43px;padding:0 5px;border:1px solid #00f7ff22;border-radius:6px;background:var(--key);color:#fff;font-size:12px;font-weight:800;cursor:pointer;touch-action:manipulation}.key:hover{background:#145a81}.key:active{transform:scale(.94)}.key.wide{min-width:65px}.key.correct{background:var(--correct)}.key.present{background:var(--present)}.key.absent{background:var(--absent)}
+.modal{display:none;position:fixed;inset:0;z-index:200;background:#0009;align-items:center;justify-content:center;padding:18px}.modal.show{display:flex}.modal-content{position:relative;width:min(92vw,520px);max-height:86vh;overflow:auto;background:linear-gradient(145deg,#062b48,#041b2e);color:var(--text);border:1px solid var(--line);border-radius:14px;padding:28px;box-shadow:0 0 28px #00f7ff22}.modal-content h2{text-align:center;color:var(--neon);text-shadow:0 0 8px #00f7ff88;margin-top:0}.close{position:absolute;right:10px;top:7px;border:0;background:transparent;color:#fff;font-size:28px;cursor:pointer}.example{display:flex;gap:4px;margin:18px 0}.example-tile{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border:2px solid var(--line);font-weight:800}.example-tile.correct{background:var(--correct);border-color:var(--correct)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center;margin:20px 0}.stats strong{display:block;font-size:30px;color:var(--neon)}.stats span{font-size:12px;color:#8fbac5}.distribution-row{display:grid;grid-template-columns:20px 1fr 30px;gap:8px;align-items:center;margin:6px 0}.bar{height:22px;background:#ffffff10;border-radius:4px;overflow:hidden}.bar span{display:block;height:100%;width:0;background:var(--correct);border-radius:4px;transition:width .4s}.share-button{width:100%;margin-top:18px;padding:12px;border:1px solid #00f7ff55;border-radius:7px;background:#15996d;color:#fff;font-weight:800;cursor:pointer}
+#dictionarySearch{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:7px;background:#031d31;color:#fff;font-size:16px;outline:none}.dictionary-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:6px;max-height:52vh;overflow:auto;margin-top:12px}.dictionary-word{min-height:36px;display:flex;align-items:center;justify-content:center;border:1px solid #00f7ff18;border-radius:5px;background:#0b3852;font-size:13px;font-weight:800}.setting{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--line)}
+.footer{position:fixed;left:0;right:0;bottom:0;height:58px;z-index:100;display:flex;align-items:center;justify-content:center;background:linear-gradient(90deg,#003366,#005577);border-top:1px solid var(--line);box-shadow:0 -4px 24px #00f7ff33}.footer span{color:var(--neon);font-size:14px}.footer a{color:var(--neon);font-weight:700}
+@media(max-width:700px){.topnav ul{gap:.2rem}.topnav a{font-size:12px;padding:.3em .4em}.topnav li:first-child{display:none}.wordle-shell{margin-top:74px;padding:8px 8px 18px}.wordle-header{height:70px}.wordle-header h1{font-size:30px;letter-spacing:4px}#board{grid-template-columns:repeat(5,55px);grid-template-rows:repeat(6,55px);gap:4px}.tile{width:55px;height:55px;font-size:27px}.keyboard-row{gap:3px}.key{min-width:30px;height:50px;font-size:10px}.key.wide{min-width:55px}.stats strong{font-size:24px}}
+@media(max-width:380px){#board{grid-template-columns:repeat(5,50px);grid-template-rows:repeat(6,50px)}.tile{width:50px;height:50px;font-size:24px}.key{min-width:27px;height:46px}.key.wide{min-width:45px}}
+</style>
 </head>
 <body>
 
-    <nav class="site-nav">
-        <div class="site-nav-inner">
-            <ul>
-                <li>
-                    <a href="/" class="site-brand" aria-label="ホーム">
-                        <img src="https://spacer4719.f5.si/images/siteicon.ico" alt="site icon">
-                    </a>
-                </li>
-                <li><a href="https://spacer4719.f5.si/aboutme/">自己紹介</a></li>
-                <li><a href="https://spacer4719.f5.si/notifications">お知らせ</a></li>
-                <li><a href="https://spacer4719.f5.si/links">他サイト</a></li>
-                <li><a href="https://spacer4719.f5.si/blog">ブログ</a></li>
-                <li><a href="https://spacer4719.f5.si/newstart">ᴄʜᴀᴘᴛᴇʀ ɪɪɪ</a></li>
-                <li><a href="https://spacer4719.f5.si/wordle">Wordle</a></li>
-            </ul>
-        </div>
-    </nav>
+<nav class="topnav">
+  <div class="topnav-inner">
+    <ul>
+      <li><a href="/"><img src="https://spacer4719.f5.si/images/siteicon.ico" alt="site"></a></li>
+      <li><a href="/aboutme/">自己紹介</a></li>
+      <li><a href="/notifications">お知らせ</a></li>
+      <li><a href="/links">他サイト</a></li>
+      <li><a href="/blog">ブログ</a></li>
+      <li><a href="/newstart">ᴄʜᴀᴘᴛᴇʀ ɪɪɪ</a></li>
+      <li><a href="/wordle">Wordle</a></li>
+    </ul>
+  </div>
+</nav>
 
-    <main class="wordle-shell">
-        <header class="wordle-header">
-            <h1>WORDLE</h1>
-            <div class="wordle-header-actions">
-                <button class="wordle-icon" id="helpButton" aria-label="遊び方">?</button>
-                <button class="wordle-icon" id="statsButton" aria-label="統計">📊</button>
-                <button class="wordle-icon" id="dictionaryButton" aria-label="辞書">📖</button>
-                <button class="wordle-icon" id="settingsButton" aria-label="設定">⚙</button>
-            </div>
-        </header>
-
-        <div id="message" aria-live="polite"></div>
-
-        <section id="board" aria-label="ゲーム盤面"></section>
-
-        <section id="keyboard" aria-label="キーボード">
-            <div class="keyboard-row">
-                <button class="key" data-key="Q">Q</button>
-                <button class="key" data-key="W">W</button>
-                <button class="key" data-key="E">E</button>
-                <button class="key" data-key="R">R</button>
-                <button class="key" data-key="T">T</button>
-                <button class="key" data-key="Y">Y</button>
-                <button class="key" data-key="U">U</button>
-                <button class="key" data-key="I">I</button>
-                <button class="key" data-key="O">O</button>
-                <button class="key" data-key="P">P</button>
-            </div>
-            <div class="keyboard-row">
-                <button class="key" data-key="A">A</button>
-                <button class="key" data-key="S">S</button>
-                <button class="key" data-key="D">D</button>
-                <button class="key" data-key="F">F</button>
-                <button class="key" data-key="G">G</button>
-                <button class="key" data-key="H">H</button>
-                <button class="key" data-key="J">J</button>
-                <button class="key" data-key="K">K</button>
-                <button class="key" data-key="L">L</button>
-            </div>
-            <div class="keyboard-row">
-                <button class="key wide" data-key="ENTER">ENTER</button>
-                <button class="key" data-key="Z">Z</button>
-                <button class="key" data-key="X">X</button>
-                <button class="key" data-key="C">C</button>
-                <button class="key" data-key="V">V</button>
-                <button class="key" data-key="B">B</button>
-                <button class="key" data-key="N">N</button>
-                <button class="key" data-key="M">M</button>
-                <button class="key wide" data-key="BACKSPACE">⌫</button>
-            </div>
-        </section>
-    </main>
-
-    <div class="wordle-modal" id="helpModal">
-        <div class="wordle-modal-content">
-            <button class="close" data-close="helpModal" aria-label="閉じる">×</button>
-            <h2>遊び方</h2>
-            <p>6回以内に5文字の英単語を当ててください。</p>
-            <div class="example">
-                <span class="example-tile correct">W</span>
-                <span class="example-tile">E</span>
-                <span class="example-tile">A</span>
-                <span class="example-tile">R</span>
-                <span class="example-tile">Y</span>
-            </div>
-            <p>🟩 文字も位置も正解</p>
-            <p>🟨 文字は含まれるが位置が違う</p>
-            <p>⬛ 答えに含まれない</p>
-        </div>
+<section class="wordle-shell">
+  <header class="wordle-header">
+    <button id="dictionaryButton" title="辞書">📖</button>
+    <h1>WORDLE</h1>
+    <div class="header-actions">
+      <button class="icon-btn" id="helpButton" title="遊び方">?</button>
+      <button class="icon-btn" id="statsButton" title="統計">📊</button>
+      <button class="icon-btn" id="settingsButton" title="設定">⚙</button>
     </div>
+  </header>
 
-    <div class="wordle-modal" id="statsModal">
-        <div class="wordle-modal-content">
-            <button class="close" data-close="statsModal" aria-label="閉じる">×</button>
-            <h2>統計</h2>
-            <div class="stats">
-                <div><strong id="played">0</strong><span>プレイ</span></div>
-                <div><strong id="winRate">0</strong><span>勝率</span></div>
-                <div><strong id="currentStreak">0</strong><span>連勝</span></div>
-                <div><strong id="maxStreak">0</strong><span>最大連勝</span></div>
-            </div>
-            <h3>推測回数</h3>
-            <div id="guessDistribution">
-                <div class="distribution-row"><span>1</span><div class="bar"><span data-count="1"></span></div><strong>0</strong></div>
-                <div class="distribution-row"><span>2</span><div class="bar"><span data-count="2"></span></div><strong>0</strong></div>
-                <div class="distribution-row"><span>3</span><div class="bar"><span data-count="3"></span></div><strong>0</strong></div>
-                <div class="distribution-row"><span>4</span><div class="bar"><span data-count="4"></span></div><strong>0</strong></div>
-                <div class="distribution-row"><span>5</span><div class="bar"><span data-count="5"></span></div><strong>0</strong></div>
-                <div class="distribution-row"><span>6</span><div class="bar"><span data-count="6"></span></div><strong>0</strong></div>
-            </div>
-            <button id="shareButton" class="share-button">結果を共有</button>
-        </div>
-    </div>
+  <main class="wordle-main">
+    <div id="message"></div>
+    <section id="board" aria-label="Game board"></section>
+    <section id="keyboard">
+      <div class="keyboard-row">
+        <button class="key" data-key="Q">Q</button><button class="key" data-key="W">W</button><button class="key" data-key="E">E</button><button class="key" data-key="R">R</button><button class="key" data-key="T">T</button><button class="key" data-key="Y">Y</button><button class="key" data-key="U">U</button><button class="key" data-key="I">I</button><button class="key" data-key="O">O</button><button class="key" data-key="P">P</button>
+      </div>
+      <div class="keyboard-row">
+        <button class="key" data-key="A">A</button><button class="key" data-key="S">S</button><button class="key" data-key="D">D</button><button class="key" data-key="F">F</button><button class="key" data-key="G">G</button><button class="key" data-key="H">H</button><button class="key" data-key="J">J</button><button class="key" data-key="K">K</button><button class="key" data-key="L">L</button>
+      </div>
+      <div class="keyboard-row">
+        <button class="key wide" data-key="ENTER">ENTER</button><button class="key" data-key="Z">Z</button><button class="key" data-key="X">X</button><button class="key" data-key="C">C</button><button class="key" data-key="V">V</button><button class="key" data-key="B">B</button><button class="key" data-key="N">N</button><button class="key" data-key="M">M</button><button class="key wide" data-key="BACKSPACE">⌫</button>
+      </div>
+    </section>
+  </main>
+</section>
 
-    <div class="wordle-modal" id="settingsModal">
-        <div class="wordle-modal-content">
-            <button class="close" data-close="settingsModal" aria-label="閉じる">×</button>
-            <h2>設定</h2>
-            <label class="setting">
-                <span>ダークモード</span>
-                <input type="checkbox" id="darkMode">
-            </label>
-        </div>
-    </div>
+<div class="modal" id="helpModal"><div class="modal-content"><button class="close" data-close="helpModal">×</button><h2>遊び方</h2><p>6回以内に5文字の英単語を当ててください。</p><div class="example"><span class="example-tile correct">W</span><span class="example-tile">E</span><span class="example-tile">A</span><span class="example-tile">R</span><span class="example-tile">Y</span></div><p>🟩 文字も位置も正解</p><p>🟨 文字は含まれるが位置が違う</p><p>⬛ 答えに含まれない</p></div></div>
 
-    <div class="wordle-modal" id="dictionaryModal">
-        <div class="wordle-modal-content">
-            <button class="close" data-close="dictionaryModal" aria-label="閉じる">×</button>
-            <h2>Wordle 辞書</h2>
-            <div id="dictionaryCount">0語</div>
-            <input type="text" id="dictionarySearch" placeholder="単語を検索..." autocomplete="off">
-            <div id="dictionaryList" class="dictionary-list"></div>
-        </div>
-    </div>
+<div class="modal" id="statsModal"><div class="modal-content"><button class="close" data-close="statsModal">×</button><h2>統計</h2><div class="stats"><div><strong id="played">0</strong><span>プレイ</span></div><div><strong id="winRate">0</strong><span>勝率</span></div><div><strong id="currentStreak">0</strong><span>連勝</span></div><div><strong id="maxStreak">0</strong><span>最大連勝</span></div></div><h3>推測回数</h3><div id="guessDistribution"><div class="distribution-row"><span>1</span><div class="bar"><span data-count="1"></span></div><strong>0</strong></div><div class="distribution-row"><span>2</span><div class="bar"><span data-count="2"></span></div><strong>0</strong></div><div class="distribution-row"><span>3</span><div class="bar"><span data-count="3"></span></div><strong>0</strong></div><div class="distribution-row"><span>4</span><div class="bar"><span data-count="4"></span></div><strong>0</strong></div><div class="distribution-row"><span>5</span><div class="bar"><span data-count="5"></span></div><strong>0</strong></div><div class="distribution-row"><span>6</span><div class="bar"><span data-count="6"></span></div><strong>0</strong></div></div><button id="shareButton" class="share-button">結果を共有</button></div></div>
 
-    <footer class="footer-bar">
-        <span>spacer4719's site — Wordle</span>
-    </footer>
+<div class="modal" id="settingsModal"><div class="modal-content"><button class="close" data-close="settingsModal">×</button><h2>設定</h2><label class="setting"><span>ダークテーマ</span><input id="darkMode" type="checkbox"></label></div></div>
 
-    <script src="words.js"></script>
-    <script src="game.js"></script>
+<div class="modal" id="dictionaryModal"><div class="modal-content"><button class="close" data-close="dictionaryModal">×</button><h2>Wordle 辞書</h2><p id="dictionaryCount">0語</p><input id="dictionarySearch" type="text" placeholder="単語を検索..." autocomplete="off"><div id="dictionaryList" class="dictionary-list"></div></div></div>
+
+<footer class="footer"><span>© spacer4719's site — <a href="/wordle">Wordle</a></span></footer>
+
+<script>
+const WORD_LENGTH=5,MAX_ATTEMPTS=6;
+const GAME_KEY='wordle-inline-game-v1',STATS_KEY='wordle-inline-stats-v1',THEME_KEY='wordle-inline-dark-v1';
+const ANSWER_WORDS=["APPLE","BEACH","BLACK","BRAIN","BREAD","BRAVE","CHAIR","CLOUD","CROWN","DREAM","EARTH","FIELD","FLAME","FLOOR","FRUIT","GHOST","GLASS","GRASS","GREEN","HEART","HOUSE","LIGHT","MONEY","MOUSE","MUSIC","NIGHT","OCEAN","PAINT","PHONE","PLANT","QUEEN","RIVER","ROBOT","ROUND","SHEEP","SHINE","SHIRT","SMILE","SPACE","STONE","STORM","SUGAR","TIGER","TRAIN","WATER","WHITE","WORLD","YOUNG"];
+const VALID_WORDS=new Set([...ANSWER_WORDS,"ABOUT","ABOVE","ADMIT","ADOPT","AFTER","AGAIN","AGENT","AGREE","ALARM","ALBUM","ALIVE","ALLOW","ALONE","ANGEL","ANGER","ANGLE","ANGRY","APART","APPLY","ARGUE","ARISE","ARRAY","ASIDE","ASSET","AUDIO","AVOID","BADLY","BASIC","BEGAN","BEGIN","BEING","BELOW","BENCH","BERRY","BIRTH","BLAME","BLIND","BLOCK","BLOOD","BOARD","BRAND","BREAK","BRING","BROWN","BUILD","BUYER","CARRY","CAUSE","CHAIN","CHART","CHECK","CHILD","CHOOSE","CLASS","CLEAN","CLEAR","CLICK","CLOCK","CLOSE","COACH","COLOR","COUNT","COURT","COVER","CRAZY","CROSS","CYCLE","DAILY","DANCE","DEATH","DELAY","DEPTH","DOING","DOUBT","DOZEN","DRAFT","DRINK","DRIVE","EARLY","EIGHT","ENEMY","ENJOY","ENTER","ENTRY","EQUAL","ERROR","EVENT","EVERY","EXACT","EXIST","EXTRA","FAITH","FALSE","FAVOR","FIGHT","FINAL","FIRST","FIXED","FOCUS","FORCE","FORGET","FOUND","FRAME","FRESH","FRONT","FULLY","FUNNY","GIANT","GIVEN","GIVING","GLORY","GOING","GRADE","GRANT","GREAT","GROUP","GUESS","GUIDE","HAPPY","HEAVY","HUMAN","HURRY","IDEAL","IMAGE","IMPLY","INDEX","INNER","INPUT","ISSUE","KNOWN","KNOWS","LARGE","LATER","LAUGH","LEARN","LEAST","LEVEL","LOCAL","LOGIC","LOOSE","LOVED","LOWER","MAGIC","MAJOR","MATCH","MAYBE","MEDIA","METAL","MODEL","MIGHT","MINOR","MIXED","MONTH","MORNING","MOTOR","MOVIE","NEVER","NEWER","NOISE","NORTH","NOTED","NOVEL","NURSE","OFFER","OFTEN","ORDER","OTHER","OUTER","OWNER","PANEL","PAPER","PARTY","PEACE","PERIOD","PIANO","PIECE","PLACE","PLAIN","PLANE","POINT","POWER","PRESS","PRICE","PRIDE","PRIME","PRINT","PRIZE","PROOF","PROUD","QUICK","QUIET","QUITE","RADIO","RAISE","RANGE","RATIO","REACH","READY","REASON","RECORD","REFER","RELAX","REPLY","RIGHT","RISKY","ROUTE","ROYAL","SCALE","SCENE","SCORE","SENSE","SERVE","SEVEN","SHAPE","SHARE","SHORT","SINCE","SIXTY","SKILL","SLEEP","SMALL","SMART","SOLID","SORRY","SOUTH","SPEED","SPEND","SPORT","STAGE","STAND","START","STATE","STEAM","STOCK","STORE","STUDY","STYLE","SUPER","SWEET","TABLE","TAKEN","TASTE","TEACH","THANK","THEME","THERE","THICK","THING","THINK","THIRD","THROW","TODAY","TOTAL","TOUCH","TOUGH","TOWER","TRACK","TRADE","TRUST","TRUTH","TWICE","UNDER","UNION","UNITY","UNTIL","UPPER","USUAL","VALUE","VIDEO","VISIT","VOICE","WATCH","WHEEL","WHERE","WHILE","WHOLE","WOMAN","WORRY","WRITE","WRONG","YEARS","YIELD","YOURS"]);
+const board=document.getElementById('board'),message=document.getElementById('message');let row=0,guess='',guesses=[],over=false,msgTimer;
+function today(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function puzzleNumber(){const s=new Date('2026-01-01T00:00:00'),d=new Date();s.setHours(0,0,0,0);d.setHours(0,0,0,0);return Math.floor((d-s)/86400000)}
+const ANSWER=ANSWER_WORDS[puzzleNumber()%ANSWER_WORDS.length];
+function buildBoard(){board.innerHTML='';for(let i=0;i<30;i++){const t=document.createElement('div');t.className='tile';board.appendChild(t)}}
+function updateRow(){const start=row*5;for(let i=0;i<5;i++)board.children[start+i].textContent=guess[i]||'';if(guess.length){const t=board.children[start+guess.length-1];t.classList.remove('pop');void t.offsetWidth;t.classList.add('pop')}}
+function check(g){const r=Array(5).fill('absent'),rem=ANSWER.split('');for(let i=0;i<5;i++)if(g[i]===ANSWER[i]){r[i]='correct';rem[i]=null}for(let i=0;i<5;i++)if(r[i]!=='correct'){const j=rem.indexOf(g[i]);if(j!==-1){r[i]='present';rem[j]=null}}return r}
+function keyState(letter,state){const k=document.querySelector(`.key[data-key="${letter}"]`);if(!k)return;const p={absent:1,present:2,correct:3};if(k.dataset.state&&p[k.dataset.state]>=p[state])return;k.dataset.state=state;k.classList.remove('absent','present','correct');k.classList.add(state)}
+function reveal(g,r){const start=row*5;for(let i=0;i<5;i++)setTimeout(()=>{const t=board.children[start+i];t.classList.add('flip');setTimeout(()=>{t.classList.add(r[i]);keyState(g[i],r[i])},250)},i*280)}
+function save(){localStorage.setItem(GAME_KEY,JSON.stringify({date:today(),row,currentGuess:guess,guesses,over}))}
+function load(){const s=localStorage.getItem(GAME_KEY);if(!s)return;try{const d=JSON.parse(s);if(d.date!==today())return;guesses=Array.isArray(d.guesses)?d.guesses.slice(0,6):[];row=Math.min(Math.max(Number(d.row)||0,guesses.length),6);guess=typeof d.currentGuess==='string'?d.currentGuess:'';over=!!d.over;guesses.forEach((x,r)=>{for(let i=0;i<5;i++){const t=board.children[r*5+i];t.textContent=x.word[i]||'';t.classList.add(x.result[i]);keyState(x.word[i],x.result[i])}});if(!over)updateRow()}catch{localStorage.removeItem(GAME_KEY)}}
+function stats(){return JSON.parse(localStorage.getItem(STATS_KEY)||'{"played":0,"wins":0,"streak":0,"maxStreak":0,"dist":{"1":0,"2":0,"3":0,"4":0,"5":0,"6":0}}')}
+function finish(win){const s=stats();s.played++;if(win){s.wins++;s.streak++;s.maxStreak=Math.max(s.maxStreak,s.streak);s.dist[String(row+1)]++}else s.streak=0;localStorage.setItem(STATS_KEY,JSON.stringify(s));save();showMessage(win?`🎉 ${row+1}回で正解！`:`答えは ${ANSWER}`);if(win){for(let i=0;i<5;i++)setTimeout(()=>board.children[row*5+i].classList.add('win'),i*110)}}
+function submit(){if(over)return;if(guess.length<5){showMessage('5文字入力してください');shake();return}if(!VALID_WORDS.has(guess)){showMessage('その単語は辞書にありません');shake();return}const r=check(guess),g=guess;guesses.push({word:g,result:r});reveal(g,r);if(g===ANSWER){over=true;guess='';save();setTimeout(()=>finish(true),1700);return}row++;guess='';if(row>=6){over=true;save();setTimeout(()=>finish(false),1700);return}save()}
+function shake(){const st=row*5;for(let i=0;i<5;i++){const t=board.children[st+i];t.classList.remove('shake');void t.offsetWidth;t.classList.add('shake')}}
+function showMessage(t){clearTimeout(msgTimer);message.textContent=t;msgTimer=setTimeout(()=>message.textContent='',2300)}
+function key(k){if(over)return;if(/^[A-Z]$/.test(k)){if(guess.length<5){guess+=k;updateRow()}}else if(k==='BACKSPACE'){guess=guess.slice(0,-1);updateRow()}else if(k==='ENTER')submit()}
+document.querySelectorAll('.key').forEach(b=>b.addEventListener('click',()=>key(b.dataset.key)));
+document.addEventListener('keydown',e=>{if(e.key==='Enter')key('ENTER');else if(e.key==='Backspace')key('BACKSPACE');else if(/^[a-zA-Z]$/.test(e.key))key(e.key.toUpperCase())});
+function open(id){document.getElementById(id)?.classList.add('show')}function close(id){document.getElementById(id)?.classList.remove('show')}
+document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>close(b.dataset.close)));document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('show')}));
+document.getElementById('helpButton').addEventListener('click',()=>open('helpModal'));
+document.getElementById('settingsButton').addEventListener('click',()=>open('settingsModal'));
+document.getElementById('statsButton').addEventListener('click',()=>{const s=stats();document.getElementById('played').textContent=s.played;document.getElementById('winRate').textContent=s.played?Math.round(s.wins/s.played*100):0;document.getElementById('currentStreak').textContent=s.streak;document.getElementById('maxStreak').textContent=s.maxStreak;const vals=Object.values(s.dist),max=Math.max(...vals,1);document.querySelectorAll('.distribution-row').forEach(r=>{const n=r.querySelector('[data-count]').dataset.count,c=s.dist[n]||0;r.querySelector('strong').textContent=c;r.querySelector('.bar span').style.width=c?Math.max(c/max*100,8)+'%':'0%'}) ;open('statsModal')});
+const dm=document.getElementById('darkMode');dm.checked=localStorage.getItem(THEME_KEY)==='true';dm.addEventListener('change',()=>localStorage.setItem(THEME_KEY,dm.checked));
+document.getElementById('dictionaryButton').addEventListener('click',()=>{renderDict('');open('dictionaryModal')});document.getElementById('dictionarySearch').addEventListener('input',e=>renderDict(e.target.value));function renderDict(q){const w=[...VALID_WORDS].filter(x=>x.includes(q.trim().toUpperCase())).sort(),list=document.getElementById('dictionaryList');document.getElementById('dictionaryCount').textContent=w.length+'語';list.innerHTML='';w.forEach(x=>{const s=document.createElement('span');s.className='dictionary-word';s.textContent=x;list.appendChild(s)})}
+document.getElementById('shareButton').addEventListener('click',async()=>{const grid=guesses.map(x=>x.result.map(s=>s==='correct'?'🟩':s==='present'?'🟨':'⬛').join('')).join('\n');const txt=`Wordle Clone ${puzzleNumber()} ${over?(guesses.length<=6?guesses.length:'X'):'X'}/6\n\n${grid}`;try{await navigator.clipboard.writeText(txt);showMessage('結果をコピーしました')}catch{window.prompt('結果をコピーしてください',txt)}});
+buildBoard();load();
+</script>
 </body>
 </html>
