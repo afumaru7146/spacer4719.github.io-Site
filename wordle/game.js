@@ -1093,6 +1093,180 @@ function setupModals() {
 
 }
 
+// ==========================================
+// 統計データ取得
+// ==========================================
+
+const STATS_STORAGE_KEY =
+    "wordle-statistics-v5";
+
+
+function getStatistics() {
+
+    const defaultStats = {
+
+        played: 0,
+
+        wins: 0,
+
+        streak: 0,
+
+        maxStreak: 0,
+
+        distribution: {
+
+            1: 0,
+            2: 0,
+            3: 0,
+            4: 0,
+            5: 0,
+            6: 0
+
+        }
+
+    };
+
+
+    const saved =
+        localStorage.getItem(
+            STATS_STORAGE_KEY
+        );
+
+
+    if (!saved) {
+
+        return defaultStats;
+
+    }
+
+
+    try {
+
+        const stats =
+            JSON.parse(saved);
+
+
+        // 不足しているデータを補完
+
+        return {
+
+            played:
+                Number(stats.played) || 0,
+
+            wins:
+                Number(stats.wins) || 0,
+
+            streak:
+                Number(stats.streak) || 0,
+
+            maxStreak:
+                Number(stats.maxStreak) || 0,
+
+            distribution: {
+
+                1:
+                    Number(
+                        stats.distribution?.[1]
+                    ) || 0,
+
+                2:
+                    Number(
+                        stats.distribution?.[2]
+                    ) || 0,
+
+                3:
+                    Number(
+                        stats.distribution?.[3]
+                    ) || 0,
+
+                4:
+                    Number(
+                        stats.distribution?.[4]
+                    ) || 0,
+
+                5:
+                    Number(
+                        stats.distribution?.[5]
+                    ) || 0,
+
+                6:
+                    Number(
+                        stats.distribution?.[6]
+                    ) || 0
+
+            }
+
+        };
+
+    }
+    catch (error) {
+
+        console.error(
+            "統計データの読み込みに失敗:",
+            error
+        );
+
+        return defaultStats;
+
+    }
+
+}
+
+// ==========================================
+// 統計データ更新
+// ==========================================
+
+function updateStatistics(win) {
+
+    const stats =
+        getStatistics();
+
+
+    stats.played++;
+
+
+    if (win) {
+
+        stats.wins++;
+
+        stats.streak++;
+
+        stats.maxStreak =
+            Math.max(
+                stats.maxStreak,
+                stats.streak
+            );
+
+
+        const attempts =
+            currentRow + 1;
+
+
+        if (
+            attempts >= 1 &&
+            attempts <= 6
+        ) {
+
+            stats.distribution[
+                attempts
+            ]++;
+
+        }
+
+    }
+    else {
+
+        stats.streak = 0;
+
+    }
+
+
+    localStorage.setItem(
+        STATS_STORAGE_KEY,
+        JSON.stringify(stats)
+    );
+
+}
 
 // ==========================================
 // 統計表示

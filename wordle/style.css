@@ -825,3 +825,109 @@ body.dark .modal-content {
 
     cursor: pointer;
 }
+
+/* =====================================
+   Dictionary
+===================================== */
+
+.dictionary-modal {
+    width: min(90vw, 700px);
+    max-height: 80vh;
+
+    overflow: hidden;
+}
+
+
+.dictionary-modal h2 {
+    margin-top: 0;
+}
+
+
+#dictionaryCount {
+    margin: 5px 0 15px;
+
+    color: #666;
+}
+
+
+#dictionarySearch {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 12px;
+
+    margin-bottom: 15px;
+
+    border: 1px solid #ccc;
+
+    border-radius: 5px;
+
+    font-size: 16px;
+}
+
+
+.dictionary-list {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fill, minmax(100px, 1fr));
+
+    gap: 6px;
+
+    max-height: 55vh;
+
+    overflow-y: auto;
+
+    padding-right: 5px;
+}
+
+
+.dictionary-word {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-height: 38px;
+
+    border: 1px solid #d3d6da;
+
+    border-radius: 3px;
+
+    font-weight: bold;
+
+    font-size: 14px;
+
+    background: #f8f8f8;
+}
+
+
+body.dark #dictionarySearch {
+
+    background: #121213;
+
+    color: white;
+
+    border-color: #565758;
+}
+
+
+body.dark #dictionaryCount {
+
+    color: #aaa;
+
+}
+
+
+body.dark .dictionary-word {
+
+    background: #3a3a3c;
+
+    border-color: #565758;
+
+    color: white;
+}
