@@ -327,9 +327,14 @@ function updateCurrentRow() {
 
 function submitGuess() {
 
+    if (gameOver) {
+        return;
+    }
+
+
+    // 5文字未満
     if (
-        currentGuess.length !==
-        WORD_LENGTH
+        currentGuess.length !== WORD_LENGTH
     ) {
 
         showMessage(
@@ -343,7 +348,6 @@ function submitGuess() {
 
 
     // 辞書チェック
-
     if (
         !VALID_WORDS.has(currentGuess)
     ) {
@@ -358,33 +362,36 @@ function submitGuess() {
     }
 
 
-    const guess =
-        currentGuess;
+    const guess = currentGuess;
 
-    const result =
-        checkGuess(guess);
+    const result = checkGuess(guess);
 
 
+    // 回答を保存
     guesses.push({
         word: guess,
         result: result
     });
 
 
+    // 現在の行に表示
     revealTiles(
         guess,
         result
     );
 
 
-    saveGame();
-
-
+    // ======================================
     // 正解
+    // ======================================
 
     if (guess === ANSWER) {
 
         gameOver = true;
+
+        // 正解した場合は
+        // currentRow はそのまま
+        saveGame();
 
         setTimeout(
             () => finishGame(true),
@@ -395,12 +402,18 @@ function submitGuess() {
     }
 
 
+    // ======================================
+    // 次の行へ
+    // ======================================
+
     currentRow++;
 
     currentGuess = "";
 
 
-    // 6回失敗
+    // ======================================
+    // 6回目まで外れた
+    // ======================================
 
     if (
         currentRow >= MAX_ATTEMPTS
@@ -408,12 +421,22 @@ function submitGuess() {
 
         gameOver = true;
 
+        saveGame();
+
         setTimeout(
             () => finishGame(false),
             1800
         );
 
+        return;
     }
+
+
+    // ======================================
+    // ここで保存
+    // ======================================
+
+    saveGame();
 
 }
 
