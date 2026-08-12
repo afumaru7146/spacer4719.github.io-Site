@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wordle | spacer4719's site</title>
+    <meta name="description" content="Wordle game on spacer4719's site.">
+    <meta property="og:url" content="https://spacer4719.f5.si/wordle">
+    <meta property="og:type" content="website">
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        :root {
+            --site-bg-1: #0a3d62;
+            --site-bg-2: #003366;
+            --cyan: #00f7ff;
+            --cyan-soft: #00f7ff55;
+            --site-text: #e0f7fa;
+            --panel: rgba(10, 61, 98, 0.85);
+        }
+
+        * { box-sizing: border-box; }
+
+        html, body { min-height: 100%; }
+
+        body {
+            margin: 0;
+            padding: 0 0 76px;
+            background: linear-gradient(135deg, var(--site-bg-1) 0%, var(--site-bg-2) 100%);
+            font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+            color: var(--site-text);
+        }
+
+        a { color: var(--cyan); }
+
+        .site-nav {
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 500;
+            background: linear-gradient(90deg, #003366 0%, #005577 100%);
+            box-shadow: 0 4px 24px #00f7ff55, 0 1px 0 #00f7ff inset;
+        }
+
+        .site-nav-inner {
+            width: min(1200px, 94vw);
+            min-height: 64px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .site-nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1.4rem;
+            flex-wrap: wrap;
+        }
+
+        .site-nav a {
+            color: var(--cyan);
+            font-size: 1rem;
+            font-weight: bold;
+            text-shadow: 0 0 8px #000, 0 0 2px #000;
+            padding: .3em .75em;
+            border-radius: 8px;
+            text-decoration: none;
+            letter-spacing: .05em;
+        }
+
+        .site-nav a:hover {
+            background: #00f7ff18;
+            box-shadow: 0 0 12px #00f7ff44;
+        }
+
+        .site-brand {
+            display: inline-flex;
+            align-items: center;
+            height: 100%;
+        }
+
+        .site-brand img {
+            width: 48px;
+            height: 48px;
+            margin-right: .5rem;
+        }
+
+        .wordle-shell {
+            width: min(560px, 96vw);
+            margin: 96px auto 20px;
+            padding: 18px 16px 24px;
+            background: rgba(0, 29, 54, .36);
+            border: 1px solid #00f7ff33;
+            border-radius: 18px;
+            box-shadow: 0 8px 32px #00f7ff33, 0 1.5px 0 #00f7ff55 inset;
+            backdrop-filter: blur(5px);
+        }
+
+        .wordle-header {
+            min-height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid #00f7ff33;
+            position: relative;
+        }
+
+        .wordle-header h1 {
+            margin: 0;
+            font-size: clamp(2rem, 7vw, 2.8rem);
+            letter-spacing: .12em;
+            color: var(--cyan);
+            text-shadow: 0 0 12px var(--cyan), 0 0 24px #0ff;
+        }
+
+        .wordle-header-actions {
+            position: absolute;
+            right: 0;
+            display: flex;
+            gap: 4px;
+        }
+
+        .wordle-icon {
+            width: 40px;
+            height: 40px;
+            border: 0;
+            border-radius: 8px;
+            background: transparent;
+            color: var(--cyan);
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .wordle-icon:hover { background: #00f7ff16; }
+
+        #message {
+            height: 46px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 0 7px #000;
+        }
+
+        #board {
+            width: max-content;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(5, 62px);
+            grid-template-rows: repeat(6, 62px);
+            gap: 6px;
+        }
+
+        .tile {
+            width: 62px;
+            height: 62px;
+            border: 2px solid #00f7ff55;
+            background: rgba(0, 25, 45, .65);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 31px;
+            font-weight: 800;
+            text-transform: uppercase;
+            user-select: none;
+            box-shadow: 0 0 8px #00f7ff13 inset;
+        }
+
+        .tile.correct { background: #1f7a59; border-color: #47ffb2; }
+        .tile.present { background: #8a7221; border-color: #ffe36a; }
+        .tile.absent { background: #4d5860; border-color: #8a9aa5; }
+
+        #keyboard { width: 100%; margin: 24px auto 0; }
+        .keyboard-row { display: flex; justify-content: center; gap: 5px; margin-bottom: 6px; }
+        .key {
+            min-width: 38px;
+            height: 52px;
+            padding: 0 7px;
+            border: 1px solid #00f7ff55;
+            border-radius: 6px;
+            background: rgba(0, 35, 60, .88);
+            color: #fff;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 0 8px #00f7ff16 inset;
+            touch-action: manipulation;
+        }
+        .key.wide { min-width: 68px; }
+        .key.correct { background: #1f7a59; }
+        .key.present { background: #8a7221; }
+        .key.absent { background: #4d5860; }
+        .key:hover { filter: brightness(1.15); }
+
+        .wordle-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            background: rgba(0, 0, 0, .65);
+        }
+        .wordle-modal.show { display: flex; }
+        .wordle-modal-content {
+            width: min(92vw, 520px);
+            max-height: 85vh;
+            overflow: auto;
+            position: relative;
+            padding: 26px 24px;
+            border-radius: 14px;
+            border: 1px solid #00f7ff66;
+            background: linear-gradient(135deg, #0b2c4a 0%, #06213a 100%);
+            color: #fff;
+            box-shadow: 0 12px 50px #000a, 0 0 20px #00f7ff22;
+        }
+        .close {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            border: 0;
+            background: transparent;
+            color: #fff;
+            font-size: 28px;
+            cursor: pointer;
+        }
+        .example { display: flex; gap: 4px; margin: 16px 0; }
+        .example-tile { width: 42px; height: 42px; display: grid; place-items: center; border: 2px solid #00f7ff55; font-weight: 800; }
+        .example-tile.correct { background: #1f7a59; border-color: #47ffb2; }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .stats strong { display: block; font-size: 28px; }
+        .stats span { font-size: 12px; opacity: .85; }
+
+        .distribution-row {
+            display: grid;
+            grid-template-columns: 20px 1fr 30px;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+        .bar { height: 22px; border-radius: 3px; background: #23475f; overflow: hidden; }
+        .bar span { display: block; height: 100%; width: 0; background: #1f7a59; transition: width .4s ease; }
+
+        .share-button {
+            width: 100%;
+            padding: 12px;
+            border: 0;
+            border-radius: 8px;
+            background: #00a8b5;
+            color: #fff;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .setting {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 0;
+            border-bottom: 1px solid #00f7ff22;
+        }
+
+        #dictionarySearch {
+            width: 100%;
+            padding: 11px 12px;
+            border-radius: 7px;
+            border: 1px solid #00f7ff55;
+            background: #08253c;
+            color: #fff;
+            outline: none;
+            margin: 10px 0 12px;
+        }
+        .dictionary-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 6px;
+            max-height: 52vh;
+            overflow-y: auto;
+        }
+        .dictionary-word {
+            min-height: 36px;
+            display: grid;
+            place-items: center;
+            border: 1px solid #00f7ff33;
+            border-radius: 4px;
+            background: #0a3554;
+            font-weight: 700;
+        }
+
+        .footer-bar {
+            width: 100%;
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 400;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(90deg, #003366 0%, #005577 100%);
+            box-shadow: 0 -4px 24px #00f7ff55, 0 -1px 0 #00f7ff inset;
+        }
+        .footer-bar span { color: var(--cyan); text-shadow: 0 0 8px var(--cyan), 0 0 2px #fff; }
+
+        body.dark .wordle-shell {
+            background: rgba(3, 15, 27, .76);
+        }
+
+        @media (max-width: 720px) {
+            .site-nav-inner { min-height: 60px; }
+            .site-nav ul { gap: .35rem; }
+            .site-nav a { font-size: .8rem; padding: .25em .45em; }
+            .wordle-shell { margin-top: 86px; }
+        }
+
+        @media (max-width: 500px) {
+            #board {
+                grid-template-columns: repeat(5, 55px);
+                grid-template-rows: repeat(6, 55px);
+                gap: 5px;
+            }
+            .tile { width: 55px; height: 55px; font-size: 27px; }
+            .key { min-width: 29px; height: 48px; font-size: 11px; padding: 0 4px; }
+            .key.wide { min-width: 55px; }
+            .wordle-shell { width: 98vw; padding-inline: 8px; }
+            .stats { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="site-nav">
+        <div class="site-nav-inner">
+            <ul>
+                <li>
+                    <a href="/" class="site-brand" aria-label="ホーム">
+                        <img src="https://spacer4719.f5.si/images/siteicon.ico" alt="site icon">
+                    </a>
+                </li>
+                <li><a href="https://spacer4719.f5.si/aboutme/">自己紹介</a></li>
+                <li><a href="https://spacer4719.f5.si/notifications">お知らせ</a></li>
+                <li><a href="https://spacer4719.f5.si/links">他サイト</a></li>
+                <li><a href="https://spacer4719.f5.si/blog">ブログ</a></li>
+                <li><a href="https://spacer4719.f5.si/newstart">ᴄʜᴀᴘᴛᴇʀ ɪɪɪ</a></li>
+                <li><a href="https://spacer4719.f5.si/wordle">Wordle</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="wordle-shell">
+        <header class="wordle-header">
+            <h1>WORDLE</h1>
+            <div class="wordle-header-actions">
+                <button class="wordle-icon" id="helpButton" aria-label="遊び方">?</button>
+                <button class="wordle-icon" id="statsButton" aria-label="統計">📊</button>
+                <button class="wordle-icon" id="dictionaryButton" aria-label="辞書">📖</button>
+                <button class="wordle-icon" id="settingsButton" aria-label="設定">⚙</button>
+            </div>
+        </header>
+
+        <div id="message" aria-live="polite"></div>
+
+        <section id="board" aria-label="ゲーム盤面"></section>
+
+        <section id="keyboard" aria-label="キーボード">
+            <div class="keyboard-row">
+                <button class="key" data-key="Q">Q</button>
+                <button class="key" data-key="W">W</button>
+                <button class="key" data-key="E">E</button>
+                <button class="key" data-key="R">R</button>
+                <button class="key" data-key="T">T</button>
+                <button class="key" data-key="Y">Y</button>
+                <button class="key" data-key="U">U</button>
+                <button class="key" data-key="I">I</button>
+                <button class="key" data-key="O">O</button>
+                <button class="key" data-key="P">P</button>
+            </div>
+            <div class="keyboard-row">
+                <button class="key" data-key="A">A</button>
+                <button class="key" data-key="S">S</button>
+                <button class="key" data-key="D">D</button>
+                <button class="key" data-key="F">F</button>
+                <button class="key" data-key="G">G</button>
+                <button class="key" data-key="H">H</button>
+                <button class="key" data-key="J">J</button>
+                <button class="key" data-key="K">K</button>
+                <button class="key" data-key="L">L</button>
+            </div>
+            <div class="keyboard-row">
+                <button class="key wide" data-key="ENTER">ENTER</button>
+                <button class="key" data-key="Z">Z</button>
+                <button class="key" data-key="X">X</button>
+                <button class="key" data-key="C">C</button>
+                <button class="key" data-key="V">V</button>
+                <button class="key" data-key="B">B</button>
+                <button class="key" data-key="N">N</button>
+                <button class="key" data-key="M">M</button>
+                <button class="key wide" data-key="BACKSPACE">⌫</button>
+            </div>
+        </section>
+    </main>
+
+    <div class="wordle-modal" id="helpModal">
+        <div class="wordle-modal-content">
+            <button class="close" data-close="helpModal" aria-label="閉じる">×</button>
+            <h2>遊び方</h2>
+            <p>6回以内に5文字の英単語を当ててください。</p>
+            <div class="example">
+                <span class="example-tile correct">W</span>
+                <span class="example-tile">E</span>
+                <span class="example-tile">A</span>
+                <span class="example-tile">R</span>
+                <span class="example-tile">Y</span>
+            </div>
+            <p>🟩 文字も位置も正解</p>
+            <p>🟨 文字は含まれるが位置が違う</p>
+            <p>⬛ 答えに含まれない</p>
+        </div>
+    </div>
+
+    <div class="wordle-modal" id="statsModal">
+        <div class="wordle-modal-content">
+            <button class="close" data-close="statsModal" aria-label="閉じる">×</button>
+            <h2>統計</h2>
+            <div class="stats">
+                <div><strong id="played">0</strong><span>プレイ</span></div>
+                <div><strong id="winRate">0</strong><span>勝率</span></div>
+                <div><strong id="currentStreak">0</strong><span>連勝</span></div>
+                <div><strong id="maxStreak">0</strong><span>最大連勝</span></div>
+            </div>
+            <h3>推測回数</h3>
+            <div id="guessDistribution">
+                <div class="distribution-row"><span>1</span><div class="bar"><span data-count="1"></span></div><strong>0</strong></div>
+                <div class="distribution-row"><span>2</span><div class="bar"><span data-count="2"></span></div><strong>0</strong></div>
+                <div class="distribution-row"><span>3</span><div class="bar"><span data-count="3"></span></div><strong>0</strong></div>
+                <div class="distribution-row"><span>4</span><div class="bar"><span data-count="4"></span></div><strong>0</strong></div>
+                <div class="distribution-row"><span>5</span><div class="bar"><span data-count="5"></span></div><strong>0</strong></div>
+                <div class="distribution-row"><span>6</span><div class="bar"><span data-count="6"></span></div><strong>0</strong></div>
+            </div>
+            <button id="shareButton" class="share-button">結果を共有</button>
+        </div>
+    </div>
+
+    <div class="wordle-modal" id="settingsModal">
+        <div class="wordle-modal-content">
+            <button class="close" data-close="settingsModal" aria-label="閉じる">×</button>
+            <h2>設定</h2>
+            <label class="setting">
+                <span>ダークモード</span>
+                <input type="checkbox" id="darkMode">
+            </label>
+        </div>
+    </div>
+
+    <div class="wordle-modal" id="dictionaryModal">
+        <div class="wordle-modal-content">
+            <button class="close" data-close="dictionaryModal" aria-label="閉じる">×</button>
+            <h2>Wordle 辞書</h2>
+            <div id="dictionaryCount">0語</div>
+            <input type="text" id="dictionarySearch" placeholder="単語を検索..." autocomplete="off">
+            <div id="dictionaryList" class="dictionary-list"></div>
+        </div>
+    </div>
+
+    <footer class="footer-bar">
+        <span>spacer4719's site — Wordle</span>
+    </footer>
+
+    <script src="words.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
