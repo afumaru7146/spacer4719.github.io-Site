@@ -724,3 +724,50 @@ body.dark .modal-content {
 
 }
 
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+
+    align-items: center;
+    justify-content: center;
+
+    z-index: 1000;
+
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-content {
+    position: relative;
+
+    width: min(90%, 450px);
+
+    padding: 25px;
+
+    border-radius: 10px;
+
+    background: white;
+}
+
+body.dark .modal-content {
+    background: #121213;
+    color: white;
+}
+
+.close {
+    position: absolute;
+
+    top: 10px;
+    right: 10px;
+
+    border: none;
+    background: transparent;
+
+    font-size: 25px;
+
+    cursor: pointer;
+}
