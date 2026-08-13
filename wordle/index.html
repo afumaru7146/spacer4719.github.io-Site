@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta property="og:url" content="https://spacer4719.f5.si/wordle">
-<title>Wordle | spacer4719</title>
+<title>Wordle | spacer4719's site</title>
 <style>
 *{box-sizing:border-box}
 :root{--bg1:#0a3d62;--bg2:#003366;--panel:#061f34;--text:#e0f7fa;--neon:#00f7ff;--line:#00f7ff55;--key:#0b4164;--correct:#5daa67;--present:#b7a33a;--absent:#5b666b}
@@ -28,6 +28,62 @@ body{padding-bottom:58px}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center;margin:20px 0}.stats strong{display:block;font-size:30px;color:var(--neon)}.stats span{font-size:12px;color:#8fbac5}.distribution-row{display:grid;grid-template-columns:20px 1fr 30px;gap:8px;align-items:center;margin:6px 0}.bar{height:22px;background:#ffffff10;border-radius:4px;overflow:hidden}.bar span{display:block;height:100%;width:0;background:var(--correct);border-radius:4px;transition:width .4s}.share-button{width:100%;margin-top:18px;padding:12px;border:1px solid #00f7ff55;border-radius:7px;background:#15996d;color:#fff;font-weight:800;cursor:pointer}
 #dictionarySearch{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:7px;background:#031d31;color:#fff;font-size:16px;outline:none}.dictionary-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:6px;max-height:52vh;overflow:auto;margin-top:12px}.dictionary-word{min-height:36px;display:flex;align-items:center;justify-content:center;border:1px solid #00f7ff18;border-radius:5px;background:#0b3852;font-size:13px;font-weight:800}.setting{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--line)}
 .footer{position:fixed;left:0;right:0;bottom:0;height:58px;z-index:100;display:flex;align-items:center;justify-content:center;background:linear-gradient(90deg,#003366,#005577);border-top:1px solid var(--line);box-shadow:0 -4px 24px #00f7ff33}.footer span{color:var(--neon);font-size:14px}.footer a{color:var(--neon);font-weight:700}
+/* PC full-page Wordle layout */
+@media(min-width:701px){
+  html,body{min-height:100vh}
+  body{padding-bottom:58px}
+  .wordle-shell{
+    width:100%;
+    min-height:calc(100vh - 64px - 58px);
+    margin:64px 0 0;
+    padding:18px 24px 28px;
+    border:0;
+    border-radius:0;
+    box-shadow:none;
+    background:rgba(3,25,42,.58);
+  }
+  .wordle-header{
+    width:100%;
+    height:84px;
+  }
+  .wordle-header h1{
+    font-size:48px;
+    letter-spacing:8px;
+  }
+  .wordle-main{
+    width:100%;
+    max-width:none;
+    min-height:calc(100vh - 64px - 84px - 58px - 28px);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+  }
+  #message{height:44px}
+  #board{
+    grid-template-columns:repeat(5,76px);
+    grid-template-rows:repeat(6,76px);
+    gap:7px;
+  }
+  .tile{
+    width:76px;
+    height:76px;
+    font-size:38px;
+  }
+  #keyboard{
+    width:min(720px,80vw);
+    margin-top:34px;
+  }
+  .keyboard-row{gap:7px;margin-bottom:8px}
+  .key{
+    height:62px;
+    min-width:52px;
+    font-size:14px;
+  }
+  .key.wide{min-width:82px}
+  #dictionaryButton{top:82px;left:24px;position:fixed}
+}
+
 @media(max-width:700px){.topnav ul{gap:.2rem}.topnav a{font-size:12px;padding:.3em .4em}.topnav li:first-child{display:none}.wordle-shell{margin-top:74px;padding:8px 8px 18px}.wordle-header{height:70px}.wordle-header h1{font-size:30px;letter-spacing:4px}#board{grid-template-columns:repeat(5,55px);grid-template-rows:repeat(6,55px);gap:4px}.tile{width:55px;height:55px;font-size:27px}.keyboard-row{gap:3px}.key{min-width:30px;height:50px;font-size:10px}.key.wide{min-width:55px}.stats strong{font-size:24px}}
 @media(max-width:380px){#board{grid-template-columns:repeat(5,50px);grid-template-rows:repeat(6,50px)}.tile{width:50px;height:50px;font-size:24px}.key{min-width:27px;height:46px}.key.wide{min-width:45px}}
 </style>
@@ -94,6 +150,13 @@ body{padding-bottom:58px}
       お問い合わせは
       <a href="http://spacer4719.f5.si/contact" style="color:#00f7ff; text-decoration:underline; font-weight:bold;">こちらから</a>
     </span>
+  </div>
+  <div style="height:56px;">
+  </div>
+
+  <meta property="og:url" content="https://spacer4719.f5.si/"/>
+   <link href="style.css" rel="stylesheet"/>
+   <link rel="stylesheet" type="text/css" href="styles.css" />
 
 <script>
 const WORD_LENGTH=5,MAX_ATTEMPTS=6;
